@@ -1,0 +1,301 @@
+# Four pillars of java
+
+### 1. Inheritance
+
+    Accuring the properties of one type to another type is called in heritance.
+    extendes key word is use to accure the property.
+
+```java filename="InheritanceExample.java" {3} copy
+
+    // Parent Class
+class Animal {
+    String name;
+
+    // Constructor
+    Animal(String name) {
+        this.name = name;
+    }
+
+    // Method
+    void speak() {
+        System.out.println(name + " makes a sound.");
+    }
+}
+
+// Child Class
+class Dog extends Animal {
+    // Constructor
+    Dog(String name) {
+        super(name); // Call the constructor of the parent class
+    }
+
+    // Overriding the speak method
+    @Override
+    void speak() {
+        System.out.println(name + " barks.");
+    }
+}
+
+public class InheritanceExample {
+    public static void main(String[] args) {
+        // Creating an instance of the parent class
+        Animal genericAnimal = new Animal("Generic Animal");
+        genericAnimal.speak(); // Output: Generic Animal makes a sound.
+
+        // Creating an instance of the child class
+        Dog dog = new Dog("Buddy");
+        dog.speak(); // Output: Buddy barks.
+    }
+}
+
+```
+
+### 2. Pollymorphism
+
+    One entity showing the behaviour of another entity is known as Pollymorphism.
+
+    2types are there
+
+    I. Compile time Pollymorphism [Overloading]
+    II.Run time Pollymorphism [Overriding]
+
+```java filename="CompileTimePolymorphismExample.java" {3} copy
+
+    class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    // Overloaded method with 3 parameters
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+}
+
+public class CompileTimePolymorphismExample {
+    public static void main(String[] args) {
+        Calculator calc = new Calculator();
+        System.out.println("Sum of 2 numbers: " + calc.add(10, 20));         // Output: 30
+        System.out.println("Sum of 3 numbers: " + calc.add(10, 20, 30));    // Output: 60
+    }
+}
+
+
+```
+
+```java filename="RunTimePolymorphismExample.java" {3} copy
+
+    // Parent Class
+class Animal {
+    void speak() {
+        System.out.println("Animal makes a sound.");
+    }
+}
+
+// Child Class
+class Dog extends Animal {
+    @Override
+    void speak() {
+        System.out.println("Dog barks.");
+    }
+}
+
+// Another Child Class
+class Cat extends Animal {
+    @Override
+    void speak() {
+        System.out.println("Cat meows.");
+    }
+}
+
+public class RunTimePolymorphismExample {
+    public static void main(String[] args) {
+        Animal animal; // Reference of parent class
+
+        animal = new Dog(); // Dog object
+        animal.speak();     // Output: Dog barks.
+
+        animal = new Cat(); // Cat object
+        animal.speak();     // Output: Cat meows.
+    }
+}
+
+
+
+```
+
+### 3. Abstraction
+
+Process of hiding complex implementation and provide the required functionalities to the user is called Abstraction.
+
+To achived Abstraction by
+1.Declaring abstracts class
+2.Using interfaces
+
+```java filename="AbstractionExample.java" {3} copy
+
+    // Abstract Class
+abstract class Animal {
+    String name;
+
+    Animal(String name) {
+        this.name = name;
+    }
+
+    // Abstract method (no implementation)
+    abstract void sound();
+
+    // Concrete method (with implementation)
+    void eat() {
+        System.out.println(name + " is eating.");
+    }
+}
+
+// Subclass 1
+class Dog extends Animal {
+    Dog(String name) {
+        super(name);
+    }
+
+    @Override
+    void sound() {
+        System.out.println(name + " barks.");
+    }
+}
+
+// Subclass 2
+class Cat extends Animal {
+    Cat(String name) {
+        super(name);
+    }
+
+    @Override
+    void sound() {
+        System.out.println(name + " meows.");
+    }
+}
+
+public class AbstractionExample {
+    public static void main(String[] args) {
+        Animal dog = new Dog("Buddy");
+        dog.sound(); // Output: Buddy barks.
+        dog.eat();   // Output: Buddy is eating.
+
+        Animal cat = new Cat("Whiskers");
+        cat.sound(); // Output: Whiskers meows.
+        cat.eat();   // Output: Whiskers is eating.
+    }
+}
+
+
+```
+
+```java filename="InterfaceExample.java" {3} copy
+
+    // Interface
+interface Vehicle {
+    void start(); // Abstract method (no implementation)
+    void stop();  // Abstract method
+}
+
+// Implementation Class 1
+class Car implements Vehicle {
+    @Override
+    public void start() {
+        System.out.println("Car starts with a key.");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Car stops with brakes.");
+    }
+}
+
+// Implementation Class 2
+class Bike implements Vehicle {
+    @Override
+    public void start() {
+        System.out.println("Bike starts with a button.");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Bike stops with hand brakes.");
+    }
+}
+
+public class InterfaceExample {
+    public static void main(String[] args) {
+        Vehicle car = new Car();
+        car.start(); // Output: Car starts with a key.
+        car.stop();  // Output: Car stops with brakes.
+
+        Vehicle bike = new Bike();
+        bike.start(); // Output: Bike starts with a button.
+        bike.stop();  // Output: Bike stops with hand brakes.
+    }
+}
+
+
+```
+
+### 4. Encapsulation
+
+    Wrapping the data and code into single object is called Encapsulation.
+
+    -- Declaring all the datamember private
+    -- To read private data member is know as getter/accessor
+    -- To update private data member is known as setter/mutator
+
+```java filename="EncapsulationExample.java" {3} copy
+
+    class Student {
+    // Private fields (data hiding)
+    private String name;
+    private int age;
+
+    // Public getter for 'name'
+    public String getName() {
+        return name;
+    }
+
+    // Public setter for 'name'
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // Public getter for 'age'
+    public int getAge() {
+        return age;
+    }
+
+    // Public setter for 'age'
+    public void setAge(int age) {
+        if (age > 0) { // Adding validation
+            this.age = age;
+        } else {
+            System.out.println("Age must be positive.");
+        }
+    }
+}
+
+public class EncapsulationExample {
+    public static void main(String[] args) {
+        // Creating an instance of Student
+        Student student = new Student();
+
+        // Setting values using setters
+        student.setName("Alice");
+        student.setAge(20);
+
+        // Getting values using getters
+        System.out.println("Name: " + student.getName()); // Output: Name: Alice
+        System.out.println("Age: " + student.getAge());   // Output: Age: 20
+
+        // Trying to set invalid age
+        student.setAge(-5); // Output: Age must be positive.
+    }
+}
+
+
+```
