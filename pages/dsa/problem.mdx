@@ -1,0 +1,67 @@
+# Problem with solution
+
+### Missing in Array
+
+You are given an array arr of size n - 1 that contains distinct integers in the range from 1 to n (inclusive). This array represents a permutation of the integers from 1 to n with one element missing. Your task is to identify and return the missing element.
+
+```text filename="Missing no an Array" {3} copy
+
+    Example:
+    Input: arr[] = [1, 2, 3, 5]
+    Output: 4
+    Explanation: All the numbers from 1 to 5 are present except 4.
+
+    ----------------------------------------------------------------
+    Example:
+    Input: arr[] = [8, 2, 4, 5, 3, 7, 1]
+    Output: 6
+    Explanation: All the numbers from 1 to 8 are present except 6.
+
+    -------------------------------------------------------------------
+
+    Example:
+    Input: arr[] = [1]
+    Output: 2
+    Explanation: Only 1 is present so the missing element is 2.
+
+
+
+
+```
+
+To solve this problem use this formula.
+
+    Sum=n×(n+1)​/2
+
+
+    Steps:
+    1.Compute the expected sum of the sequence 1 to n.
+    2.Compute the actual sum of the elements in the array.
+    3.The difference between the expected sum and the actual sum gives the missing number.
+
+```java filename="" {3} copy
+
+    class MissingNumber {
+    public static int findMissingNumber(int[] arr) {
+        int length = arr.length +1;
+        int sumofNumbers = (length*(length + 1))/2;
+
+        int arrDefault=0;
+
+        for(int sumofArrayNumber : arr){
+            arrDefault = arrDefault + sumofArrayNumber;
+        }
+
+        int missingNumberIs = sumofNumbers - arrDefault;
+
+        return missingNumberIs;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 5};
+        System.out.println("The missing number is: " + findMissingNumber(arr));
+    }
+}
+
+
+```
