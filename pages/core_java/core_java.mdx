@@ -1,0 +1,86 @@
+# Basic java Code
+
+- `public`: keyword
+- `static`: keyword
+- `void` : keyword
+- `main` : Main method (Method Name)
+- `String[] args` : Argument and their Type
+
+```java filename="Formula.java" {3} copy
+    class Formula{
+        public static void main(String args[]){
+         System.out.println("Hello Java");
+        }
+    }
+```
+
+### static block
+
+- `static` block are executed only once at the time of class loading.
+- A class can hava more than one static block.
+- `static block` are used to initialized static variable or member.
+- `this` key word can't be used within a static block.
+- within a static block non-static member can't be reference directly.
+
+### Non-static / Instance block
+
+- Non-static block are executed each time when an object is created.
+- Non-static blocks are executed before constructor.
+- A class can have more than one non-static block.
+- `this` keyword can be used within a non-static block ,to reffer the current instance.
+
+```java filename="Example.java" {3} copy
+
+    class X{
+        static{
+            System.out.println("static block in X class");
+        }
+        {
+            System.out.println("non-static block in X class");
+        }
+        X(){
+            System.out.println("constructor in X class");
+        }
+    }
+    class Y extends X{
+        static{
+            System.out.println("static block in Y class");
+        }
+        {
+            System.out.println("non-static block in Y class");
+        }
+        X(){
+            System.out.println("constructor in Y class");
+        }
+    }
+
+    class Example{
+        public static void main(String[] args){
+            System.out.println("----------------------------------");
+            new Y();
+            System.out.println("----------------------------------");
+            new Y();
+        }
+    }
+
+```
+
+```text filename="Output" {3} copy
+Output:
+    new Y();                                 new X();
+    ---------------------------              --------------------------
+    static block in X class                  static block in X class
+    static block in Y class                  non-static block in X class
+    non-static block in X class              constructor in X class
+    constructor in X class
+    non-static block in Y class
+    constructor in Y class
+
+    new Y();                                 new X();
+    ---------------------------              ---------------------------
+    non-static block in X class              non-static block in X class
+    constructor in X class                   constructor in X class
+    non-static block in Y class
+    constructor in Y class
+
+```

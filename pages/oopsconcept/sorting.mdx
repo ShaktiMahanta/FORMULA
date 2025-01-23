@@ -1,0 +1,158 @@
+### Why use Comparable and Comparator?
+
+In java , we often need to sort collections of objects (Like `List`, `Array`, etc) .
+However, objects are usually complex and java doesn't know how to order them
+unless we explicitly define how to compare them.
+
+- This is where `Comparable` and `Comparartor` interface come in picture:
+  - Comparable: Use this when the natural ordering of the objects is
+    required. You define the default comparision logic directly in the object class.
+  - Comparartor: Use this when you want to define Muliple ways to compare objects order
+    when you did't control the source code of the class and canot modify it.
+
+### Comparator
+
+- Purpose: Defines a custum ordering of `object`.
+- Implementation: A separate class implement the Comparator interface.
+- Method: compare(Object o1, Object o2)
+- Muliple Sorting sequence: Muliple sequence can be Defines.
+
+```java fileName="ComparatorExample.java" {3} copy
+
+
+import java.util.*;
+
+class Student {
+    private final String firstName;
+    private final String lastName;
+    private final int age;
+
+    public Student(String firstName, String lastName, int age) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                '}';
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+
+class AgeComparator implements Comparator<Student> {
+      @Override
+      public int compare(Student s1, Student s2) {
+           return Integer.compare(s1.getAge(),s2.getAge());
+      }
+}
+class FirstNameComparator implements Comparator<Student> {
+    @Override
+    public int compare(Student s1, Student s2) {
+        return s1.getFirstName().compareTo(s2.getFirstName());
+    }
+}
+class LastNameComparator implements Comparator<Student> {
+    @Override
+    public int compare(Student s1, Student s2) {
+        return s1.getLastName().compareTo(s2.getLastName());
+    }
+}
+public class ComparatorExample {
+    public static void main(String[] args) {
+        ArrayList<Student> students = new ArrayList<>();
+        students.add(new Student("Alice", "Sha",22));
+        students.add(new Student("Bob", "Martin",20));
+        students.add(new Student("Charlie", "Caplin",21));
+
+
+        students.sort(new FirstNameComparator());
+
+        System.out.println("Students sorted by FirstName:");
+        for (Student s : students) {
+            System.out.println(s);
+        }
+
+        System.out.println("--------------------------------");
+
+        students.sort(new AgeComparator());
+        System.out.println("Students sorted by age:");
+        for (Student s : students) {
+            System.out.println(s);
+        }
+
+        System.out.println("--------------------------------");
+
+        students.sort(new LastNameComparator());
+        System.out.println("Students sorted by LastName:");
+        for (Student s : students) {
+            System.out.println(s);
+        }
+
+        System.out.println("--------------------------------");
+
+    }
+}
+
+
+
+```
+
+### Comparable
+
+- Purpose: Defines the natural ordering of objects.
+- Implementation: The class, whose Objects need to be compared implements the Comparable interface.
+- Method: compareTo(Object o1, Object o2)
+- Single Sorting sequence: Only one sort sequence can be Defined.
+
+```java filename="ComparableExample.java" {3} copy
+
+    class Book implement Comparable<Book>{
+        private String title;
+        private String author;
+
+        public Book(String title,String author){
+            this.title = title;
+            this.author = author;
+        }
+
+        @Override
+        public int compareTo(Book other){
+            return this.title.compareTo(other.title);
+        }
+
+        @Override
+        public String toString(){
+            return title + "by" + author;
+        }
+    }
+
+    class ComparableExample{
+        public static void main(String[] args){
+            List<Book> books = new ArrayList<>();
+            books.add(new Book("Hobbit","J.R.R.T"));
+            books.add(new Book("Harry Porter","J.K.Rawling"));
+            books.add(new Book("Hobbit","George onvell"));
+
+            Collections.sort(books);//use Comparable
+            books.forEach(System.out::println);
+
+        }
+    }
+
+```

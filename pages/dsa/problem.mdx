@@ -1,0 +1,303 @@
+# Problem with solution
+
+### Missing in Array
+
+You are given an array arr of size n - 1 that contains distinct integers in the range from 1 to n (inclusive). This array represents a permutation of the integers from 1 to n with one element missing. Your task is to identify and return the missing element.
+
+```text filename="Missing no an Array" {3} copy
+
+    Example:
+    Input: arr[] = [1, 2, 3, 5]
+    Output: 4
+    Explanation: All the numbers from 1 to 5 are present except 4.
+
+    ----------------------------------------------------------------
+    Example:
+    Input: arr[] = [8, 2, 4, 5, 3, 7, 1]
+    Output: 6
+    Explanation: All the numbers from 1 to 8 are present except 6.
+
+    -------------------------------------------------------------------
+
+    Example:
+    Input: arr[] = [1]
+    Output: 2
+    Explanation: Only 1 is present so the missing element is 2.
+
+
+
+
+```
+
+To solve this problem use this formula.
+
+    Sum=n×(n+1)​/2
+
+
+    Steps:
+    1.Compute the expected sum of the sequence 1 to n.
+    2.Compute the actual sum of the elements in the array.
+    3.The difference between the expected sum and the actual sum gives the missing number.
+
+```java filename="" {3} copy
+
+    class MissingNumber {
+    public static int findMissingNumber(int[] arr) {
+        int length = arr.length +1;
+        int sumofNumbers = (length*(length + 1))/2;
+
+        int arrDefault=0;
+
+        for(int sumofArrayNumber : arr){
+            arrDefault = arrDefault + sumofArrayNumber;
+        }
+
+        int missingNumberIs = sumofNumbers - arrDefault;
+
+        return missingNumberIs;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 5};
+        System.out.println("The missing number is: " + findMissingNumber(arr));
+    }
+}
+
+
+```
+
+### Second Largest
+
+Given an array of positive integers arr[], return the second largest element from the array. If the second largest element doesn't exist then return -1.
+
+Note: The second largest element should not be equal to the largest element.
+
+```test fileName="" {3} copy
+
+    Input: arr[] = [10, 5, 10]
+Output: 5
+Explanation: The largest element of the array is 10 and the second largest element is 5.
+Input: arr[] = [10, 10, 10]
+Output: -1
+Explanation: The largest element of the array is 10 and the second largest element does not exist.
+
+```
+
+```java fileName="" {3} copy
+
+public class SecondLargestNo {
+    public static void main(String[] args) {
+        int[] arr = new int[]{12,24,87,56};
+        System.out.println(SecondLargestNo.findSecondLargest(arr));
+    }
+
+    private static int findSecondLargest(int[] arr) {
+
+        int largest = Integer.MIN_VALUE;
+        int secondLargest = Integer.MIN_VALUE;
+
+        for(int num : arr){
+            if(num>largest){
+                secondLargest = largest;
+                largest = num;
+            }else if (num > secondLargest && num != largest){
+                secondLargest = num;
+            }
+        }
+        return (secondLargest == Integer.MIN_VALUE ? -1 : secondLargest);
+    }
+
+}
+
+
+```
+
+### Move All Zeroes to End
+
+Given an array arr[]. Push all the zeros of the given array to the right end of the array while maintaining the order of non-zero elements. Do the mentioned change in the array in place.
+
+```text fileName="Examples" {3} copy
+
+    Input: arr[] = [1, 2, 0, 4, 3, 0, 5, 0]
+    Output: [1, 2, 4, 3, 5, 0, 0, 0]
+    Explanation: There are three 0s that are moved to the end.
+
+    -------------------------------------
+    Input: arr[] = [10, 20, 30]
+    Output: [10, 20, 30]
+    Explanation: No change in array as there are no 0s.
+
+    -------------------------------------
+
+    Input: arr[] = [0, 0]
+    Output: [0, 0]
+    Explanation: No change in array as there are all 0s.
+
+```
+
+```java fileName="MoveAllZeroToEnd.java" {3} copy
+
+    import java.util.Arrays;
+
+public class MoveAllZeroToEnd {
+    public static void main(String[] args) {
+        //int[] arr = {1,2,0,4,3,0,5,0};
+        int[]  arr = {0,0,0,3,1,4};
+        MoveAllZeroToEnd.moveAllZeroToRight(arr);
+    }
+
+    private static void moveAllZeroToRight(int[] arr) {
+        int start = 0;
+        for(int i = 0 ; i<arr.length ;i++){
+            if(arr[i] != 0){
+                int temp = arr[start];
+                arr[start] = arr[i];
+                arr[i] = temp;
+                start++;
+            }
+        }
+        System.out.println(Arrays.toString(arr));
+    }
+}
+
+```
+
+### Reverse an Array
+
+You are given an array of integers arr[]. Your task is to reverse the given array.
+
+```text fileName="" {3} copy
+
+Input: arr = [1, 4, 3, 2, 6, 5]
+Output: [5, 6, 2, 3, 4, 1]
+Explanation: The elements of the array are 1 4 3 2 6 5. After reversing the array, the first element goes to the last position, the second element goes to the second last position and so on. Hence, the answer is 5 6 2 3 4 1.
+----------------------------------------
+Input: arr = [4, 5, 2]
+Output: [2, 5, 4]
+Explanation: The elements of the array are 4 5 2. The reversed array will be 2 5 4.
+
+```
+
+solution:
+
+```java fileName="Reverse.java" {3} copy
+
+    import java.util.Arrays;
+
+public class Xample002 {
+    public static void main(String[] args) {
+        int[] arr = {1,2,3,4};
+        reverse(arr);
+        System.out.println(Arrays.toString(arr));
+
+    }
+
+    private static void reverse(int[] arr) {
+      int start=0;
+      int end = arr.length-1;
+      for(int i = start ;i < end;i++){
+          int temp = arr[start];
+          arr[start] =arr[end];
+          arr[end] = temp;
+          start++;
+          end--;
+      }
+    }
+}
+
+
+```
+
+### Rotate Array
+
+Given an unsorted array arr[]. Rotate the array to the left (counter-clockwise direction) by d steps, where d is a positive integer. Do the mentioned change in the array in place.
+
+Note: Consider the array as circular.
+
+```text filename="" {3} copy
+
+    Examples :
+
+    Input: arr[] = [1, 2, 3, 4, 5], d = 2
+    Output: [3, 4, 5, 1, 2]
+    Explanation: when rotated by 2 elements, it becomes 3 4 5 1 2.
+    ----------------------------------------------------
+    Input: arr[] = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20], d = 3
+    Output: [8, 10, 12, 14, 16, 18, 20, 2, 4, 6]
+    Explanation: when rotated by 3 elements, it becomes 8 10 12 14 16 18 20 2 4 6.
+
+```
+
+```java filename="RotateAnArray.java" {3} copy
+
+import java.util.Arrays;
+
+public class RotateAnArray {
+    static void rotateArr(int arr[], int d) {
+        // add your code here
+        int length = arr.length;
+        if(d == 0 || d==length) return;
+
+        d= d % length;
+        reverse(arr,0,d-1);
+        reverse(arr,d,length-1);
+        reverse(arr,0,length-1);
+    }
+    public static void reverse(int[] arr , int start, int end){
+        while(start<end){
+            int temp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        int d = 2;
+        rotateArr(arr,d);
+        System.out.println(Arrays.toString(arr));
+    }
+}
+
+```
+
+### Duplicate Charecter Count
+
+```
+Count the duplicate in a string
+```
+
+```java filename="CharecterCount.java" {3} copy
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class CharecterCount {
+    public static void main(String[] args) {
+
+        String input = "programming";
+
+        Map<Character, Integer> charCountMap = new HashMap<>();
+
+        // Count the frequency of each character
+        for (char c : input.toCharArray()) {
+            charCountMap.put(c, charCountMap.getOrDefault(c, 0) + 1);
+            System.out.println("inside loop: " + charCountMap);
+        }
+
+        System.out.println("Duplicate characters and their counts:");
+
+        System.out.println(charCountMap);
+        // Display characters that appear more than once
+        for (Map.Entry<Character, Integer> entry : charCountMap.entrySet()) {
+            if (entry.getValue() > 1) {
+                System.out.println(entry.getKey() + ": " + entry.getValue());
+            }
+        }
+
+    }
+}
+
+```
