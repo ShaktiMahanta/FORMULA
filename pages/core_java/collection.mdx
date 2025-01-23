@@ -1,0 +1,73 @@
+# Java Collection
+
+import Image from "next/image";
+
+<Image
+  src="/images/Collection Framework Hierarchy.jpg"
+  alt="Java Collection Hierarchy"
+  width={800}
+  height={500}
+/>
+
+### Difference Between Collection and Collections.
+
+- `Collection` is an interface which can be used to represent a group
+  of individual objects as a single entity.
+
+- `Collections` is an utility class present in `java.util.package`
+  to define several utility methods(like `sorting`,`seaching`,..) for
+  `Collection` objects.
+
+### Set Interface
+
+- Set is a collection of distinct(or unique) objects.
+
+- Set does not allow duplicate objects.
+
+  1. HashSet
+
+  - Doesn't guarenty any specific Order.
+
+  2. LinkedHashSet
+
+  - Preserves insertion Order.
+
+  3. TreeSet
+
+  - By default it sort according to Comparable Implmentation , If Comparator is provided ,
+    then it sorts according to provided Comparartor Implmentation.
+
+```java filename="SetDemo.java" {3} copy
+
+    import java.util.*;
+    class SetDemo{
+        public static void main(String[] args){
+            Set set = new HashSet();//LinkedHashSet();//TreeSet();
+            set.add("Mango");
+            set.add("Banana");
+            set.add("Apple");
+            set.add("Orange");
+            set.add("Graphs");
+
+            for (Object namesOfFruits : set){
+                System.out.println(namesOfFruits);
+            }
+        }
+    }
+
+```
+
+```java fileName="" {3} copy
+    Output:
+
+    HashSet()       LinkedHashSet()   TreeSet()
+    -Apple          -Mango            -Apple
+    -Mango          -Banana           -Banana
+    -Graphs         -Apple            -Graphs
+    -Orange         -Orange           -Mango
+    -Banana         -Graphs           -Orange
+
+
+```
+
+### Array vs set

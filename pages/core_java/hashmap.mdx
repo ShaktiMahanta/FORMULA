@@ -1,0 +1,45 @@
+# Map provide methods
+
+```java filename="Map.java" {3} copy
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapDemo {
+    public static void main(String[] args) {
+        Map<Integer,String> user = new HashMap<>();
+        user.put(1001,"Mamta Choudhary");
+        user.put(1002,"Shakti Mahanta");
+        user.put(1003,"Radha Singh");
+        user.put(1004,"Kishan Rao");
+
+        System.out.println("1. "+user);// {1001=Mamta Choudhary, 1002=Shakti Mahanta, 1003=Radha Singh, 1004=Kishan Rao}
+        System.out.println("2. "+user.get(1001));// Mamta Choudhary
+        System.out.println("3. "+user.containsKey(1003));// true
+        System.out.println("4. "+user.isEmpty());//false
+        System.out.println("5. "+user.containsValue("Mamta Choudhary"));//true
+        System.out.println("6. "+user.entrySet());//[1001=Mamta Choudhary, 1002=Shakti Mahanta, 1003=Radha Singh, 1004=Kishan Rao]
+        System.out.println("7. "+user);//{1001=Mamta Choudhary, 1002=Shakti Mahanta, 1003=Radha Singh, 1004=Kishan Rao}
+        System.out.println("8. "+user.equals(1003));//false
+        System.out.println("9. "+user.hashCode());//-1950748106
+        System.out.println("10. "+user.keySet());// [1001, 1002, 1003, 1004]
+        System.out.println("11. "+user.values());//[Mamta Choudhary, Shakti Mahanta, Radha Singh, Kishan Rao]
+        System.out.println("12. "+user.replace(1005,"Ram Singh"));//null
+        System.out.println("13. "+user);//{1001=Mamta Choudhary, 1002=Shakti Mahanta, 1003=Radha Singh, 1004=Kishan Rao}
+        System.out.println("14. "+user.replace(1004,"Ram Singh"));//Kishan Rao
+        System.out.println("15. "+user);//{1001=Mamta Choudhary, 1002=Shakti Mahanta, 1003=Radha Singh, 1004=Ram Singh}
+        System.out.println("16. "+user.remove(1004));//Ram  Singh
+        System.out.println("17. "+user);//{1001=Mamta Choudhary, 1002=Shakti Mahanta, 1003=Radha Singh}
+        System.out.println("18. "+user.remove(1003,"Radha Singh"));//true
+        System.out.println("19. "+user);//{1001=Mamta Choudhary, 1002=Shakti Mahanta}
+        System.out.println("20. "+user.size());//2
+        System.out.println("21. "+user.isEmpty());//false
+
+
+
+
+    }
+}
+
+
+```

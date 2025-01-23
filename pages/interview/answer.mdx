@@ -1,0 +1,82 @@
+### Monolithic vs. Microservice Architecture
+
+## Monolithic Architecture
+
+- `Single Unit`: The entire application is a single, cohesive unit. All components (e.g., UI, business logic, data access) are interconnected and run as one.
+- `Easy Deployment`: Since it's a single unit, deploying the application is straightforward.
+- `Simple Development`: Initial development can be simpler, as you don't need to worry about inter-service communication.
+- `Scalability`: Scaling a monolithic app can be challenging. You typically have to scale the entire application, even if only one part of it needs more resources.
+- `Maintenance`: Over time, as the application grows, it can become difficult to maintain. Changes to one part of the app may impact other parts.
+
+## Microservice Architecture
+
+- **Decoupled Services**: The application is divided into small, independent services, each responsible for a specific business function.
+- **Independent Deployment**: Each microservice can be developed, deployed, and scaled independently.
+- **Flexibility**: Different services can use different technologies and programming languages best suited for their specific needs.
+- **Scalability**: Easier to scale individual services that need more resources.
+- **Complexity**: More complex to develop and manage. You need to handle inter-service communication, data consistency, and more.
+- **Resilience**: Fault isolation is better. If one service fails, it doesn't necessarily bring down the entire application.
+
+| **Feature**       | **Monolithic**                         | **Microservice**                                        |
+| :---------------- | :------------------------------------- | :------------------------------------------------------ |
+| Structure         | Single,Unified codebase                | Multiple independent services                           |
+| Scalability       | Limited to whole application           | Independently scalable services                         |
+| Development Speed | Faster initially but slows as it grows | Can be slower initially but allows parallel development |
+| Deployment        | Single deployment unit                 | Independent deployment units                            |
+| Fault Isolation   | Issues can impact the entire system    | Issues are isolated to specific services                |
+| Technology Stack  | Usually limited to a single tech stack | Can use different technologies for different services   |
+
+## Protocols for inter Api connection.
+
+    1. **HTTP/HTTPS**
+    2. **REST (Representational State Transfer)**
+    3. **SOAP (Simple Object Access Protocol)**
+    4. **gRPC (gRPC Remote Procedure Call)**
+    5. **GraphQL**
+    6. **WebSockets**
+    7. **MQTT (Message Queuing Telemetry Transport)**
+    8. **AMQP (Advanced Message Queuing Protocol)**
+    9. **XMPP (Extensible Messaging and Presence Protocol)**
+    10. **SFTP (Secure File Transfer Protocol)**
+
+## How to create singleton class?
+
+```java filename="Singleton.java" {3} copy
+public class Singleton {
+    // Private static instance of the class
+    private static Singleton instance;
+
+    // Private constructor to prevent instantiation
+    private Singleton() {}
+
+    // Public method to provide access to the instance
+    public static Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}
+
+```
+
+### Spring FrameWork VS Spring Boot
+
+import Image from "next/image";
+
+<Image
+  src="/images/Spring Framework vs Spring Boot.png"
+  alt="Java Collection Hierarchy"
+  width={800}
+  height={500}
+/>
+
+### @SpringBootApplication
+
+- Absolutely! The @SpringBootApplication annotation is a key feature in Spring Boot.
+  It’s essentially a convenience annotation that combines three important annotations:
+  @Configuration, @EnableAutoConfiguration, and @ComponentScan. Let's break these down:
+
+  1. **@Configuration**: This annotation indicates that the class is a source of bean definitions for the application context. It’s used to define beans, using Java-based configuration.
+  2. **@EnableAutoConfiguration**: This enables Spring Boot’s auto-configuration mechanism. It attempts to automatically configure your Spring application based on the dependencies you have added. For example, if you include spring-boot-starter-web as a dependency, it will automatically configure Tomcat and Spring MVC.
+  3. **@ComponentScan**: This tells Spring to scan the current package and all its sub-packages for components, configurations, and services, which are then registered as Spring beans. This is particularly useful for finding Spring-managed components.

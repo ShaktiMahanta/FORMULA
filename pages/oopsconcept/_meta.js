@@ -1,4 +1,4 @@
 export default {
   oops: "Oops",
-  comparator: "Comparator",
+  sorting: "2 Ways of sorting Objects",
 };
