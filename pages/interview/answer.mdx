@@ -1,6 +1,6 @@
 ### Monolithic vs. Microservice Architecture
 
-## Monolithic Architecture
+**Monolithic Architecture**
 
 - `Single Unit`: The entire application is a single, cohesive unit. All components (e.g., UI, business logic, data access) are interconnected and run as one.
 - `Easy Deployment`: Since it's a single unit, deploying the application is straightforward.
@@ -8,7 +8,7 @@
 - `Scalability`: Scaling a monolithic app can be challenging. You typically have to scale the entire application, even if only one part of it needs more resources.
 - `Maintenance`: Over time, as the application grows, it can become difficult to maintain. Changes to one part of the app may impact other parts.
 
-## Microservice Architecture
+**Microservice Architecture**
 
 - **Decoupled Services**: The application is divided into small, independent services, each responsible for a specific business function.
 - **Independent Deployment**: Each microservice can be developed, deployed, and scaled independently.
@@ -26,7 +26,7 @@
 | Fault Isolation   | Issues can impact the entire system    | Issues are isolated to specific services                |
 | Technology Stack  | Usually limited to a single tech stack | Can use different technologies for different services   |
 
-## Protocols for inter Api connection.
+### Protocols for inter Api connection.
 
     1. **HTTP/HTTPS**
     2. **REST (Representational State Transfer)**
@@ -39,7 +39,7 @@
     9. **XMPP (Extensible Messaging and Presence Protocol)**
     10. **SFTP (Secure File Transfer Protocol)**
 
-## How to create singleton class?
+### How to create singleton class?
 
 ```java filename="Singleton.java" {3} copy
 public class Singleton {
@@ -80,3 +80,214 @@ import Image from "next/image";
   1. **@Configuration**: This annotation indicates that the class is a source of bean definitions for the application context. It’s used to define beans, using Java-based configuration.
   2. **@EnableAutoConfiguration**: This enables Spring Boot’s auto-configuration mechanism. It attempts to automatically configure your Spring application based on the dependencies you have added. For example, if you include spring-boot-starter-web as a dependency, it will automatically configure Tomcat and Spring MVC.
   3. **@ComponentScan**: This tells Spring to scan the current package and all its sub-packages for components, configurations, and services, which are then registered as Spring beans. This is particularly useful for finding Spring-managed components.
+
+### Inversion of Control (IoC) and Dependency Injection.
+
+- Inversion of Control (IoC) is a fundamental principle in Spring framework.
+- In `DI` Instead of the programmer creating and managing the objects and their dependencies manually, the control is given to the Spring IoC container.
+
+  **How IoC Works**
+
+  1. **Bean Definition**: Beans (objects) are defined in configuration files (XML or Java annotations).
+  2. **Container Initialization**: The Spring IoC container is initialized, reading the configuration and creating the objects (beans).
+  3. **Dependency Injection**: The container injects dependencies into the beans, either through constructor injection, setter injection, or field injection.
+
+  **Benefits of IoC**
+
+  1. **Decoupling**: Promotes loose coupling between components, making the application easier to maintain and test.
+  2. **Reusability**: Components can be reused across different parts of the application.
+  3. **Configurable**: Provides flexibility to change implementations without modifying the code.
+
+  **Types of Dependency Injection**
+
+  1. **Constructor Injection**: Dependencies are provided through the class constructor.
+
+     ```java filename="Java" copy
+        @Component
+        public class MyService {
+
+            private final Dependency dependency;
+
+            @Autowired
+            public MyService(Dependency dependency) {
+                this.dependency = dependency;
+            }
+        }
+     ```
+
+  2. **Setter Injection**: Dependencies are provided through setter methods.
+
+     ```java filename="Java" copy
+       @Component
+       public class MyService {
+           private Dependency dependency;
+
+           @Autowired
+           public void setDependency(Dependency dependency) {
+               this.dependency = dependency;
+           }
+       }
+     ```
+
+  3. **Field Injection**: Dependencies are provided directly into the fields.
+
+     ```java filename="Java" copy
+       @Component
+        public class MyService {
+            @Autowired
+            private Dependency dependency;
+        }
+
+     ```
+
+### Garbage Collector
+
+- The `Garbage Collector` (GC) is a crucial component in the Java Virtual Machine (JVM) responsible for automatic memory management. Its primary role is to reclaim memory occupied by objects that are no longer in use, thus preventing memory leaks and optimizing the application's performance.
+
+**How Garbage Collection Works**
+
+1. `Object Creation`: When a new object is created, the JVM allocates memory for it in the heap.
+2. `Reachability`: The GC monitors the reachability of objects. If an object is no longer reachable (no active references pointing to it), it is considered eligible for garbage collection.
+3. `Mark and Sweep`: The GC marks all reachable objects and then sweeps through the heap to collect and remove the unmarked objects, reclaiming their memory.
+4. `Compaction`: Some GC algorithms also compact the heap by moving reachable objects to one end, thus reducing fragmentation and improving memory allocation efficiency.
+
+**Types of Garbage Collectors**
+
+1. **Serial Garbage Collector**: Uses a single thread for garbage collection.
+2. **Parallel Garbage Collector**: Uses multiple threads for garbage collection.
+3. **CMS (Concurrent Mark-Sweep) Garbage Collector**: Performs most of its work concurrently with the application.
+4. **G1 (Garbage-First) Garbage Collector**: Divides the heap into regions and prioritizes garbage collection in regions with the most garbage.
+
+**Advantages of Garbage Collection**
+
+- **Automatic Memory Management**: Developers don’t need to manually manage memory, reducing the risk of memory leaks and other related issues.
+- **Optimization**: GC algorithms continually evolve, offering better performance and efficiency.
+
+### ArrayList VS LinkedList
+
+| **Feature**                 | **ArrayList**                                                                 | **LinkedList**                                              |
+| :-------------------------- | :---------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| Underlying DS               | Uses dynamic resizable array.                                                 | Uses a doubly LinkedList.                                   |
+| Access time                 | Get and Set is faster due to direct indexing.O(1)                             | Get and Set slower it requied from start or end.O(n)        |
+| Insertion and Deletion Time | Insertion and Deletion slower[except end] O(n)                                | Insertion and deletion faster O(1)                          |
+| Memory Uses                 | Less memory overhead                                                          | More memory overhead due to pointer                         |
+| Use Case                    | Used frequent access of element, But insertion and deletion are less frequent | Used ,When fequent insertion and deletion operation happen. |
+
+### REST VS SOAP
+
+**REST (Representational State Transfer)**
+**Key Characteristics**:
+
+- **Architecture Style**: REST is an architectural style that uses standard HTTP methods (GET, POST, PUT, DELETE) to perform operations.
+- **Data Format**: Primarily uses JSON, but can also use XML, HTML, or plain text.
+- **Stateless**: Each request from a client to the server must contain all the information needed to understand and process the request. The server does not store any client context.
+- **Scalability**: Designed to be scalable and performant due to its stateless nature.
+- **Simplicity**: Easier to implement and understand due to its use of standard HTTP methods and status codes.
+- **Flexibility**: Can be used with a variety of data formats and protocols.
+
+**SOAP (Simple Object Access Protocol)**
+**Key Characteristics**:
+
+- **Protocol**: SOAP is a protocol that relies on XML-based messaging.
+- **Data Format**: Exclusively uses XML for message formatting.
+- **Stateful or Stateless**: Can be either stateful or stateless, depending on the requirement.
+- **Complexity**: More complex due to strict standards and rules, which can lead to more robust and secure implementations.
+- **Standardization**: Offers built-in error handling and security features (e.g., WS-Security).
+- **Transport Protocols**: Can operate over various protocols such as HTTP, SMTP, TCP, etc.
+
+### Checked exception vs Unchecked exception
+
+**Checked Exceptions**
+
+**Definition**: Checked exceptions are exceptions that are checked at compile-time. If a method throws a checked exception, the method must either handle the exception using a try-catch block or declare it using the throws keyword.
+
+**Characteristics**:
+
+- Must be either caught or declared in the method signature.
+- Represent conditions that a well-written application should anticipate and recover from.
+
+**Examples**: `IOException`, `SQLException`, `FileNotFoundException`
+
+**Examples**:
+
+```java filename="java" copy
+
+    import java.io.*;
+
+    public class CheckedExample {
+        public static void main(String[] args) {
+            try {
+                FileReader file = new FileReader("somefile.txt");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+```
+
+**Unchecked Exceptions**
+
+**Definition**: Unchecked exceptions are exceptions that are not checked at compile-time. These exceptions are typically the result of programming errors, such as logic errors or improper use of an API.
+
+**Characteristics**:
+
+- Do not need to be caught or declared in the method signature.
+- Represent problems that are often the result of bugs and should not be recovered from in the same way as checked exceptions.
+
+**Examples**: `NullPointerException`, `ArrayIndexOutOfBoundsException`, `ArithmeticException`
+
+**Examples**:
+
+```java filename="java" copy
+
+    public class UncheckedExample {
+        public static void main(String[] args) {
+            int[] numbers = {1, 2, 3};
+            int result = numbers[5]; // This will throw ArrayIndexOutOfBoundsException
+        }
+    }
+
+```
+
+### @Bean vs @Component
+
+**@Bean**
+
+- **Definition**: `@Bean` is an annotation used at the method level. It tells Spring that a method will return an object that should be registered as a bean in the application context.
+- **Usage**: Primarily used in Java configuration classes annotated with `@Configuration`.
+- **Customization**: Allows more control over the instantiation and configuration of the bean. You can specify dependencies, initialization methods, destroy methods, etc.
+
+**Example**:
+
+```java filename="java" copy
+
+    @Configuration
+    public class AppConfig {
+
+        @Bean
+        public MyService myService() {
+            return new MyServiceImpl();
+        }
+    }
+
+
+```
+
+**@Component**
+
+- **Definition**: @Component is a class-level annotation. It tells Spring that the annotated class is a Spring-managed component and should be registered as a bean in the application context.
+- **Usage**: Used for automatic discovery and registration of beans in the Spring context through classpath scanning.
+- **Stereotypes**: There are specialized stereotypes like @Service, @Repository, and @Controller which are derived from @Component and provide additional semantics.
+
+**Example**:
+
+```java filename="java" copy
+
+    @Component
+    public class MyComponent {
+        // class body
+    }
+
+```
