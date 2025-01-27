@@ -322,3 +322,48 @@ import Image from "next/image";
 
 
 ```
+
+### @Transactional
+
+`@Transactional` annotation in Java, commonly used in the context of Spring framework for managing transactions,
+
+- **Purpose**: It demarcates/separate transaction boundaries, ensuring that a `method` **or** `class` is executed within a database transaction. If any part of the method fails, the transaction can be rolled back, ensuring `data integrity`.
+- **Usage**: You can apply it to methods or classes to define transactional behavior.
+- **Configuration**: Typically, you'll use it in Spring applications with the @EnableTransactionManagement annotation or XML configuration.
+
+```java filename="java" copy
+    @Service
+    public class MyService {
+
+        @Autowired
+        private MyRepository myRepository;
+
+        @Transactional
+        public void performTransactionalOperation() {
+            // Your code here
+        }
+    }
+```
+
+### Apache Kafka
+
+**Q.How it works and what will happen in `DB` if it fails.**
+
+**Apache Kafka** is an open-source distributed event streaming platform used for building `real-time data pipelines and streaming` applications. Here's a brief overview of how it works:
+
+**How Apache Kafka Works**:
+
+- **Producers**: Applications that publish data to Kafka.
+
+- **Topics**: Kafka stores data in topics, which are divided into partitions for scalability.
+- **Brokers**: Kafka servers that store data and serve clients.
+- **Consumers**: Applications that read data from Kafka.
+- **ZooKeeper**: Manages Kafka cluster metadata and leader election.
+
+**Failure Impact on Database:**
+If Kafka fails, the impact on the database depends on how Kafka is integrated into your system. Here are some potential scenarios:
+
+1. **Data Loss**: If Kafka is used for data ingestion and there's no backup, data that hasn't been processed might be lost.
+2. **Application Downtime**: Applications relying on Kafka for real-time data might experience downtime or degraded performance.
+3. **Data Inconsistency**: If Kafka is part of a distributed system, failure might lead to data inconsistency until the system recovers.
+   To mitigate these risks, it's crucial to have redundancy, backups, and monitoring in place. This ensures high availability and quick recovery in case of failures
