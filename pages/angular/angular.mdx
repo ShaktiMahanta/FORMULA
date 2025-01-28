@@ -1,30 +1,26 @@
-# Two-way Binding
+### Two-way Binding
 
-Two-Way Binding
-
-    1.Definition:
+    1. **Definition**:
         Automatically synchronizes data between the model and the view in both directions. Changes in the UI update the model, and changes in the model reflect in the UI.
 
-    2.Mechanism:
+    2. **Mechanism**:
         Requires a framework or library that listens for changes in both the model and the view.
-
-    ``` html fileName="a.html" {3} copy
+    ``` html filename=".html"  copy
         Angular (using [(ngModel)]):
 
         <input [(ngModel)]="name" />
         <p>Hello, {{ name }}</p>
     ```
+           - If the user types in the input, the name variable updates automatically.
+           - If the name variable changes programmatically, the input field updates.
 
-            If the user types in the input, the name variable updates automatically.
-            If the name variable changes programmatically, the input field updates.
+    3.**Use Case**:
+       - Scenarios where the user input directly affects the application state, such as forms.
 
-    3.Use Case:
-        Scenarios where the user input directly affects the application state, such as forms.
+    4.**Advantages**:
+       - Simplifies handling of user input.
+       - Reduces boilerplate code for updating the view and model.
 
-    4.Advantages:
-        Simplifies handling of user input.
-        Reduces boilerplate code for updating the view and model.
-
-    5.Disadvantages:
-        Harder to debug as changes can occur in multiple places.
-        Can lead to performance issues in large applications due to constant syncing.
+    5.**Disadvantages**:
+       - Harder to debug as changes can occur in multiple places.
+       - Can lead to performance issues in large applications due to constant syncing.

@@ -19,7 +19,7 @@
 
 | **Feature**       | **Monolithic**                         | **Microservice**                                        |
 | :---------------- | :------------------------------------- | :------------------------------------------------------ |
-| Structure         | Single,Unified codebase                | Multiple independent services                           |
+| Structure         | Single,Unified/togeather codebase      | Multiple independent services                           |
 | Scalability       | Limited to whole application           | Independently scalable services                         |
 | Development Speed | Faster initially but slows as it grows | Can be slower initially but allows parallel development |
 | Deployment        | Single deployment unit                 | Independent deployment units                            |
@@ -367,3 +367,12 @@ If Kafka fails, the impact on the database depends on how Kafka is integrated in
 2. **Application Downtime**: Applications relying on Kafka for real-time data might experience downtime or degraded performance.
 3. **Data Inconsistency**: If Kafka is part of a distributed system, failure might lead to data inconsistency until the system recovers.
    To mitigate these risks, it's crucial to have redundancy, backups, and monitoring in place. This ensures high availability and quick recovery in case of failures
+
+### Duplicate column count
+
+```sql filename="sql" copy
+    SELECT column_name, COUNT(*)
+    FROM table_name
+    GROUP BY column_name
+    HAVING COUNT(*) > 1;
+```
