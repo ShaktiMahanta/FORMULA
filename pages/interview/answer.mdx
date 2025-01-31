@@ -376,3 +376,52 @@ If Kafka fails, the impact on the database depends on how Kafka is integrated in
     GROUP BY column_name
     HAVING COUNT(*) > 1;
 ```
+
+### How to make your object immutable in Java
+
+- Since there is no built-in mechanism in Java to make an object immutable, we need to design for it ourselves. Best practices are:
+
+- Declare your class `final`: this ensures that it cannot be extended, preventing subclasses from altering its immutability.
+- Use Encapsulation: make all your fields `private` and `final`
+- Provide only getter methods, but do not implement a setter
+- Do not use references to mutable data
+- Use a deep copy when reading external data
+- Return a copy of your data
+- Use fully immutable fields when possible
+- Factory pattern: make sure to control how your object is created.
+- Review your public methods to enforce that no changes are done to your internal variables.
+- (Java 14+) Use `record` when possible, specially as DTO (Data Transfer Objects) or any class that primarily carries data without complex behavior.
+- TEST for immutability
+
+### Solid Principle
+
+- The SOLID principles are a set of design principles in object-oriented programming that help create more `understandable`, `flexible`, and `maintainable` code. These principles were introduced by Robert C. Martin, also known as Uncle Bob. Here are the SOLID principles in Java:
+
+1. **Single Responsibility Principle (SRP)**:
+   - class should have only one job or responsibility.
+   - **Example**: A class responsible for handling user authentication should not be responsible for handling database operations.
+2. **Open/Closed Principle (OCP)**:
+   - Software entities (`classes`, `modules`, `functions`, etc.) should be open for extension but closed for modification.
+   - **Example**: You can extend the functionality of a class through inheritance or interfaces without modifying the existing code.
+3. **Liskov Substitution Principle (LSP)**:
+   - Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program.
+   - **Example**: If Bird is a superclass and Penguin is a subclass, a Penguin should be able to replace a Bird object without breaking the program.
+4. **Interface Segregation Principle (ISP)**:
+   - Clients should not be forced to depend on interfaces they do not use.
+   - **Example**: Instead of having one large interface with many methods, create smaller, more specific interfaces.
+5. **Dependency Inversion Principle (DIP)**:
+   - High-level modules should not depend on low-level modules. Both should depend on abstractions (e.g., interfaces).
+   - Abstractions should not depend on details. Details should depend on abstractions.
+   - **Example**: Instead of a class directly instantiating another class, it should depend on an interface that the other class implements.
+
+### Queue Vs Stack
+
+### nth Highest salary sql
+
+```sql filename="sql" copy
+    -- For MySQL, PostgreSQL
+    SELECT salary
+    FROM employees
+    ORDER BY salary DESC
+    LIMIT 1 OFFSET n-1;
+```
