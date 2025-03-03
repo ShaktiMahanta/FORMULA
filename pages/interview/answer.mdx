@@ -75,7 +75,7 @@ import Image from "next/image";
 
 - Absolutely! The @SpringBootApplication annotation is a key feature in Spring Boot.
   It’s essentially a convenience annotation that combines three important annotations:
-  @Configuration, @EnableAutoConfiguration, and @ComponentScan. Let's break these down:
+  `@Configuration`, `@EnableAutoConfiguration`, and `@ComponentScan`. Let's break these down:
 
   1. **@Configuration**: This annotation indicates that the class is a source of bean definitions for the application context. It’s used to define beans, using Java-based configuration.
   2. **@EnableAutoConfiguration**: This enables Spring Boot’s auto-configuration mechanism. It attempts to automatically configure your Spring application based on the dependencies you have added. For example, if you include spring-boot-starter-web as a dependency, it will automatically configure Tomcat and Spring MVC.
@@ -418,6 +418,8 @@ If Kafka fails, the impact on the database depends on how Kafka is integrated in
 
 ### nth Highest salary sql
 
+1. Using `LIMIT` with `OFFSET` (MySQL, PostgreSQL, etc.)
+
 ```sql filename="sql" copy
     -- For MySQL, PostgreSQL
     SELECT salary
@@ -425,3 +427,62 @@ If Kafka fails, the impact on the database depends on how Kafka is integrated in
     ORDER BY salary DESC
     LIMIT 1 OFFSET n-1;
 ```
+
+2. Using `DENSE_RANK()` (SQL Server, Oracle, PostgreSQL, MySQL 8+)
+
+```sql filename="sql" copy
+    SELECT salary
+    FROM (
+    SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+    FROM employees
+    ) ranked
+    WHERE rnk = N;
+```
+
+### HashMap vs Hashtable
+
+| **Feature**        | **HashMap**                                    | **HashTable**                             |
+| :----------------- | :--------------------------------------------- | :---------------------------------------- |
+| Synchronization    | Not synchronized                               | Synchronized                              |
+| Null keys/values   | Allows one null value and multiple null values | Does not allow null key or values         |
+| Performance        | Generally faster                               | Slower due to Synchronization             |
+| Inheritance        | Extends `AbstractMap` and implements `Map`     | Extends `Dictionary` and implements `Map` |
+| Fail-fast Iterator | Yes                                            | No                                        |
+| Legacy             | No                                             | Yes                                       |
+
+### Functional Interface
+
+- A Functional Interface in Java is an interface with just one abstract method. These interfaces can be represented using lambda expressions, method references, or constructor references, making them a key part of functional programming in Java. Functional interfaces are annotated with the @FunctionalInterface annotation, although it's optional.
+
+- **Examples of Functional Interfaces**:
+
+  1. **Runnable**
+
+  ```java filename="java" copy
+        @FunctionalInterface
+        public interface Runnable {
+            void run();
+        }
+
+  ```
+
+  2. **Custom method**
+
+  ```java filename="java" copy
+        @FunctionalInterface
+        interface MyFunctionalInterface {
+            void execute();
+
+            default void display() {
+                System.out.println("Default method in functional interface.");
+            }
+        }
+
+        public class Main {
+            public static void main(String[] args) {
+                MyFunctionalInterface funcInterface = () -> System.out.println("Executing functional interface method.");
+                funcInterface.execute();
+                funcInterface.display();
+            }
+        }
+  ```

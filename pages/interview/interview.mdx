@@ -57,6 +57,157 @@
 54. How to make your object immutable in java?
 55. Queue vs stack
 
+### Wissen Technology R2 Interview
+
+1.How to take a thread dump in a process, and why we take thread dumps. 2. Explain the steps we would perform when the application is not responding/stuck/hang.
+3.We have a csv file
+student_id,student_name,student_dob
+1, Bob, 2020-01-05
+2, Alice, 1998-06-06
+
+parse this file stored in memory (any data structure you want)
+
+As you cover various scenarios below , ask candidate to suggest the collection/data structure. Do not prompt them or give choices.
+
+Follow-up questions
+
+- i. Reject the records in case like ID is null, Name is Null,DOB is null. These are DQ checks.
+- II. What will happen when multiple students have same DOB.
+- III. Which data structure should be used to search effectively by student id and also print the list whenever required in the same order we read from the file LinkedHashMap or combines.
+
+4. What is WAL(Write ahead log)? How this can be implemented in real time software applications to make system more robust?
+5. Please define and write high level code for sample Factory, Factory pattern, and Abstract Factory pattern.
+6. Please let me know how to implement payment gateway to communicate to multiple banks. High level design and request response flow.
+7. Input: nums = [1,1,2]
+   Output : 2 ,nums=[1,2,null]
+
+Follow up - Remove some duplicates in-place such that each unique element appears at most twice Example:-
+Input: nums = [1,1,1,2,2,3]
+Output: 5 , nums = [1,1,2,2,3,null] - Expected time complexity O(n) Where n= no of elements in array.
+-Able to debug and get to working code - Boundry conditions are handled (empty array,null)
+
+8. Note: Create a shared google doc with your wissen id ans share with the candidate to put their notes.
+   Put the document link in the feedback. The same di=ocument can be used for multiple questions.
+
+   Consider the following program to insert values into HashSet.
+
+   ```java filename="java" copy
+
+       class Student{
+           public int id;
+           public String name;
+
+           public Student(String name,int id){
+               this.name = name;
+               this.id = id;
+           }
+
+           public int hashCode(){
+               return this.id;
+           }
+
+           public String toString(){
+               return "Student: " + this.name + "@" + Integer.toHexString(hashCode());
+           }
+
+           public boolean equals(Object o){
+               if(o instanceof Student){
+                   Strudent s =(Student) o;
+                   return s.id == this.id ? true: false;
+               }
+               return false;
+           }
+       }
+
+       public class UpdateHashSet {
+           public static void main(String[] args){
+               HashSet<Student> studentList = new HashSet<>();
+
+               Student s1 = new Student("Mamta",1);
+               Student s2 = new Student("Shakti",3);
+               Student s3 = new Student("Mamta",2);
+
+               studentList.add(s1);
+               studentList.add(s2);
+               studentList.add(s3);
+
+               System.out.println(studentList.size());
+
+               s1.id = 3;
+
+               System.out.println(studentList.size());
+
+
+           }
+       }
+
+
+   ```
+
+9. Why Autowired annotation is deprecated in Spring boot.
+10. SOLID principal
+11. Simple Factory and Factory Method Design Pattern.Please write working code.
+12. Q
+
+    ```java filename="java" copy
+
+       class Parent{
+            static void staticMethod(){
+                System.out.println("Static method in Parent");
+            }
+       }
+       class Child extends Parent{
+            static void staticMethod(){
+                System.out.println("Static method in Child");
+            }
+       }
+
+       public class StaticMethodTest{
+            public static void main(String[] args){
+                Parent.staticMethod();
+                Child.staticMethod();
+
+                Parent parent = new Child();
+                parent.staticMethod;
+
+            }
+       }
+
+    ```
+
+    Note: Candidate is aware of how inheritance works.
+    Candidate is aware of how static methods are resolved at compile-time not run time.
+
+13. Create a shared google doc with your wissen id and share with the candidate to put their notes.
+    Put the document link in the feedback. The same document can be used for multiple questions.
+
+    OOP'S Concepts:
+    Design entities and behavior for File System.Expose a method to calculate the size of the any entity in the file system .
+    You are expected to give interfaces, classes, hierarchy between classes.
+
+    Evaluation: Candidate knows about Association and Delegations
+    Explain the isA and hasA relationship?
+
+14. Note - Create a shared google doc with your wissen id and share with the candidate to put their notes. Put the document link in the feedback. The same document can be used for multiple questions
+
+Write a Java program to print a sequence of numbers up to N using 3 threads. For example, if we want to print a sequence of numbers up to 10 then it'll look like this:
+
+THREAD-1:1
+THREAD-2:2
+THREAD-3:3
+THREAD-1:4
+THREAD-2:5
+THREAD-3:6
+THREAD-1:7
+THREAD-2:8
+THREAD-3:9
+THREAD-1:10
+
+Evaluation:
+Candidate came up with the right approach [Satisfactory]
+Candidate was able to write the pseudo code [Satisfactory]
+•⁠ ⁠Explained the difference between Runnable and Callable. What are the pros and cons? [Satisfactory]
+
 # Interview Question in Angular
 
 1. One way Binding vs Two way Binding

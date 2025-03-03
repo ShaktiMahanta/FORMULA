@@ -1,0 +1,122 @@
+### HLD and LLD
+
+- **HLD (High-Level Design)** and **LLD (Low-Level Design)** are two critical phases in software design. They serve different purposes and are used at different stages of the software development lifecycle. Here's a detailed explanation with a real-world example to help you understand the difference:
+
+1. **High-Level Design (HLD)**
+
+   - **Purpose**: HLD focuses on the overall system architecture. It provides a big-picture view of the system, including its `components`, `modules`, and `interactions`.
+
+   - **Audience**: HLD is planned/intended for stakeholders, architects, and technical leads.
+
+   - **Key Elements**:
+
+     - System architecture (monolithic, microservices, etc.).
+     - Major components and their interactions.
+     - Data flow and high-level workflows.
+     - Technology stack (programming languages, frameworks, databases, etc.).
+     - Scalability, reliability, and security considerations.
+
+   - **Deliverables**: Architectural diagrams, system flowcharts, and high-level module descriptions.
+
+2. **Low-Level Design (LLD)**
+
+   - **Purpose**: LLD focuses on the detailed design of individual components or modules. It describes how each component will be implemented.
+
+   - **Audience**: LLD is planned/intended for developers and engineers who will write the code.
+
+   - **Key Elements**:
+
+     - Class diagrams, database schemas, and API specifications.
+     - Detailed algorithms and data structures.
+     - Error handling and edge cases.
+     - Integration details between modules.
+
+   - **Deliverables**: Class diagrams, sequence diagrams, ER diagrams, and pseudocode.
+
+---
+
+**Real-World Example: Online Food Delivery System**
+**High-Level Design (HLD)**
+
+    - **Objective**: Design the overall architecture of an online food delivery system.
+
+    - **Components**:
+
+        1. **User Interface (UI)**: Web and mobile apps for customers, restaurants, and delivery personnel.
+
+        2. **Backend Services**:
+            - **Order Management**: Handles order creation, updates, and cancellations.
+            - **Restaurant Management**: Manages restaurant menus, availability, and orders.
+            - **Delivery Management**: Assigns delivery personnel and tracks orders.
+            - **Payment Gateway**: Processes payments.
+
+        3. **Database**: Stores user data, restaurant data, orders, and payment details.
+
+        4. **Third-Party Integrations**: Maps (for delivery tracking), SMS/email notifications, and payment gateways.
+
+    - **Technology Stack**:
+
+        - Frontend: React.js (Web), Swift/Kotlin (Mobile).
+        - Backend: Node.js with Express.js.
+        - Database: MongoDB (NoSQL) for flexible data storage.
+        - Cloud: AWS for hosting and scalability.
+
+    - **Architecture**: Microservices architecture for scalability and independent deployment of components.
+
+    - **Data Flow**:
+
+        - Customer places an order → Order Management Service processes it → Restaurant Management Service confirms the order → Delivery Management Service assigns a delivery person → Payment Gateway processes payment → Notifications are sent to the customer and restaurant.
+
+**Low-Level Design (LLD)**
+
+    - **Objective**: Design the detailed implementation of the Order Management Service.
+
+    - **Components**:
+
+        1. **Order Class**:
+
+            - **Attributes**: orderId, userId, restaurantId, items, totalAmount, status.
+
+            - **Methods**: createOrder(), updateOrderStatus(), cancelOrder().
+
+        2. **Database Schema**:
+
+            **Orders Table**:
+
+                - **Columns**: order_id (PK), user_id, restaurant_id, items, total_amount, status, created_at.
+
+            **Order Items Table**:
+
+                - **Columns**: order_item_id (PK), order_id (FK), item_name, quantity, price.
+
+        3. **APIs**:
+
+            - **POST** `/orders`: Create a new order.
+
+            - **PUT** `/orders/{orderId}`: Update order status.
+
+            - **DELETE** `/orders/{orderId}`: Cancel an order.
+
+        4. **Algorithms**:
+
+            - **Order Creation**:
+
+                - Validate user and restaurant details.
+                - Calculate the total amount.
+                - Save the order in the database.
+                - Send a confirmation notification.
+
+            - **Order Status Update**:
+
+                - Check if the order exists.
+                - Validate the new status.
+                - Update the order status in the database.
+                - Notify the customer and restaurant.
+
+        5. **Error Handling**:
+
+            - Handle cases like invalid user/restaurant IDs, payment failures, and database errors.
+
+        6. **Sequence Diagram**:
+
+            Illustrates the interaction between the user, Order Management Service, and database during order creation.

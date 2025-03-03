@@ -24,20 +24,12 @@ import Image from "next/image";
 
 - Set does not allow duplicate objects.
 
-  1. HashSet
+  1. **HashSet**: Doesn't guarenty any specific Order.
+  2. **LinkedHashSet**: Preserves insertion Order.
+  3. **TreeSet**: By default it sort according to Comparable Implmentation , If Comparator is provided ,
+     then it sorts according to provided Comparartor Implmentation.
 
-  - Doesn't guarenty any specific Order.
-
-  2. LinkedHashSet
-
-  - Preserves insertion Order.
-
-  3. TreeSet
-
-  - By default it sort according to Comparable Implmentation , If Comparator is provided ,
-    then it sorts according to provided Comparartor Implmentation.
-
-```java filename="SetDemo.java" {3} copy
+```java filename="SetDemo.java"  copy
 
     import java.util.*;
     class SetDemo{
@@ -57,7 +49,7 @@ import Image from "next/image";
 
 ```
 
-```java fileName="" {3} copy
+```java fileName=""  copy
     Output:
 
     HashSet()       LinkedHashSet()   TreeSet()
