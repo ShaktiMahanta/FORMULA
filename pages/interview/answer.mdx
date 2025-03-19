@@ -397,22 +397,59 @@ If Kafka fails, the impact on the database depends on how Kafka is integrated in
 
 - The SOLID principles are a set of design principles in object-oriented programming that help create more `understandable`, `flexible`, and `maintainable` code. These principles were introduced by Robert C. Martin, also known as Uncle Bob. Here are the SOLID principles in Java:
 
-1. **Single Responsibility Principle (SRP)**:
-   - class should have only one job or responsibility.
-   - **Example**: A class responsible for handling user authentication should not be responsible for handling database operations.
-2. **Open/Closed Principle (OCP)**:
+1. **Single Responsibility Principle (SRP):**
+
+   - A class should have only one job or responsibility.
+   - **Example 1:** A class responsible for handling user authentication should not be responsible for handling database operations.
+   - **Example 2: Banking System:**
+     - Different Bank Services (Instead of creating them in one service, divide them into smaller services):
+       - **BankServices** (e.g. deposit, withdrawal)
+       - **LoanServices**
+       - **NotificationService**
+       - **PrinterService**
+
+2. **Open/Closed Principle (OCP):**
+
    - Software entities (`classes`, `modules`, `functions`, etc.) should be open for extension but closed for modification.
-   - **Example**: You can extend the functionality of a class through inheritance or interfaces without modifying the existing code.
+   - **Example 1:** You can extend the functionality of a class through inheritance or interfaces without modifying the existing code.
+   - **Example 2: NotificationService:**
+     - Instead of using a tightly coupled implementation, declare a `NotificationService` interface with two methods (`sendOtp()` and `sendTransactionalDetails()`).
+     - Implement the following services to handle different types of notifications:
+       - **EmailNotificationService**
+       - **MobileNotificationService**
+       - **WhatsAppNotificationService**
+
 3. **Liskov Substitution Principle (LSP)**:
+
    - Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program.
-   - **Example**: If Bird is a superclass and Penguin is a subclass, a Penguin should be able to replace a Bird object without breaking the program.
+   - **Example 1**: If `Bird` is a superclass and `Penguin` is a subclass, a `Penguin` should be able to replace a `Bird` object without breaking the program.
+   - **Example 2: SocialMedia:**
+
+     - There are different features provided by social media (like `chatWithFriend`, `GroupVideoCalling`, `sendVideoAndPhotos`, `publishAPost`, etc.):
+       - **Facebook**: All features are applicable.
+       - **Instagram**: `GroupVideoCalling` is not possible.
+       - **WhatsApp**: `publishAPost` is not possible.
+
+   - **Note**: To maintain the principle, create 3 interfaces and call them:
+     1. `PublishMediaManager`: For methods related to publishing media, like `publishAPost`.
+     2. `SocialMedia`: For methods like `chatWithFriend` and `sendVideoAndPhotos`.
+     3. `VideoCallManager`: For methods related to video calling, like `GroupVideoCalling`.
+
 4. **Interface Segregation Principle (ISP)**:
+
    - Clients should not be forced to depend on interfaces they do not use.
    - **Example**: Instead of having one large interface with many methods, create smaller, more specific interfaces.
+   - **Example 2: UPI Payment System**:
+     - **PhonePe**
+     - **GooglePay**: Cashback features are available, so create a separate interface specifically for cashback functionality.
+     - **Paytm**
+
 5. **Dependency Inversion Principle (DIP)**:
    - High-level modules should not depend on low-level modules. Both should depend on abstractions (e.g., interfaces).
    - Abstractions should not depend on details. Details should depend on abstractions.
-   - **Example**: Instead of a class directly instantiating another class, it should depend on an interface that the other class implements.
+   - **Example 1**: Instead of a class directly instantiating another class, it should depend on an interface that the other class implements.
+   - **Example 2: ShoppingMall**:
+     - Create an interface `BankCard` that performs the transaction (`doTheTransaction` method), which can be implemented by either `DebitCard` or `CreditCard` classes. The decision about which class to use will be made at runtime, ensuring the system remains loosely coupled.
 
 ### Queue Vs Stack
 
@@ -441,14 +478,14 @@ If Kafka fails, the impact on the database depends on how Kafka is integrated in
 
 ### HashMap vs Hashtable
 
-| **Feature**        | **HashMap**                                    | **HashTable**                             |
-| :----------------- | :--------------------------------------------- | :---------------------------------------- |
-| Synchronization    | Not synchronized                               | Synchronized                              |
-| Null keys/values   | Allows one null value and multiple null values | Does not allow null key or values         |
-| Performance        | Generally faster                               | Slower due to Synchronization             |
-| Inheritance        | Extends `AbstractMap` and implements `Map`     | Extends `Dictionary` and implements `Map` |
-| Fail-fast Iterator | Yes                                            | No                                        |
-| Legacy             | No                                             | Yes                                       |
+| **Feature**        | **HashMap**                                  | **HashTable**                             |
+| :----------------- | :------------------------------------------- | :---------------------------------------- |
+| Synchronization    | Not synchronized                             | Synchronized                              |
+| Null keys/values   | Allows one null key and multiple null values | Does not allow null key or values         |
+| Performance        | Generally faster                             | Slower due to Synchronization             |
+| Inheritance        | Extends `AbstractMap` and implements `Map`   | Extends `Dictionary` and implements `Map` |
+| Fail-fast Iterator | Yes                                          | No                                        |
+| Legacy             | No                                           | Yes                                       |
 
 ### Functional Interface
 
@@ -486,3 +523,27 @@ If Kafka fails, the impact on the database depends on how Kafka is integrated in
             }
         }
   ```
+
+  ### Key Takeaways: When to Use Constructors vs. Setters
+
+  | **Scinario**                                                                         | **Use Constructor** | **Use Setters** |
+  | :----------------------------------------------------------------------------------- | :------------------ | :-------------- |
+  | Creating an immutable object (e.g., Product, User Registration, Banking Transaction) | ✅ Yes              | ❌ No           |
+  | Object must always have required values (e.g., ID, Name)                             | ✅ Yes              | ❌ No           |
+  | Object data should not change after creation                                         | ✅ Yes              | ❌ No           |
+  | Need to update values later (e.g., Order Status, User Profile)                       | ❌ No               | ✅ Yes          |
+  | Some fields are optional                                                             | ❌ No               | ✅Yes           |
+
+### ACID Properties
+
+| **Property** | **Description**                                                   | **Example**                                                              |
+| :----------- | :---------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| Atomicity    | All operations in a transaction succeed or fail as a single unit. | Money transfer: both debit and credit must be succeed or both must fail. |
+| consistency  | Transaction bring the database from one valid state to another.   | Account balances cannot go negative.                                     |
+| Isolation    | Concurrent transaction do not interfere with each other.          | Two transfers happening at the same time do not corrupt the data.        |
+| Durability   | Committed transactions are permanent and survive system failures. | After a transfer, the changes are saved even if the system crashes.      |
+
+- **Importance of ACID**:
+  - **Data Integrity**: Ensures that data remains accurate and consistent.
+  - **Reliability**: Guarantees reliability, even in the face of errors or failures.
+  - **Trust**: Enables users and applications to trust the database to maintain correct and consistent data.
