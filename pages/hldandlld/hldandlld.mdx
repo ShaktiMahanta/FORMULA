@@ -120,3 +120,42 @@
         6. **Sequence Diagram**:
 
             Illustrates the interaction between the user, Order Management Service, and database during order creation.
+
+### All key feature/term used in design a system.
+
+import Image from "next/image";
+
+<Image
+  src="/images/hldAndlld.png"
+  alt="HLD and LLD main key features"
+  width={800}
+  height={500}
+/>
+
+1. **Client-Server Architecture :**
+
+   - Almost every web application taht you use is built on this simple yet powerful concept call client-server Architecture.
+   - It works on one side you have a client this could be a Web-browser a mobile app or any frontend application and on the other side you have the server a machine that runs contineously wating to handdle in coming request.
+     the client sends a request to `store`,`retrive` and `modify` data the server received the request process it and perform neccessary operation and sends back response.
+
+<Image
+  src="/images/clientServerArchitecture.png"
+  alt="HLD and LLD main key features"
+  width={800}
+  height={500}
+/>
+
+- Here there is a big Q how does the client even know Where to find the server , aclient doesn't magically know where the server is it need an address to locate and communicate with it .
+- On the internet computer identify each other using `IP Address`, Which work like phone numbers for server.
+
+2. **IP Address :**
+   <Image
+     src="/images/IP Address.jpg"
+     alt="HLD and LLD main key features"
+     width={800}
+     height={500}
+   />
+
+- Every publically deployed server has a unique IP Address.
+- When a client wants to interact with a service it must send to a correct IP Address but there is a problem when we visite a web site we don't type its IPAddress we just enter the website name right?
+  Instead of relying on hard to remember Ip Address we use something much more human frienly `DOMAIN NAMES` but we need a way to map a domain name to its corressponding Ip address This is where DNS come in picture.

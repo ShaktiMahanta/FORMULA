@@ -301,3 +301,37 @@ public class CharecterCount {
 }
 
 ```
+
+### Best time to Bye stock
+
+```java filename="BestTimeToByeStock.java" copy
+
+public class BestTimeToByeandSellStock {
+    public static void main(String[] args) {
+        BestTimeToByeandSellStock  bestTimeToByeandSellStock = new BestTimeToByeandSellStock();
+        int[] arr = {7,1,5,3,6,4};
+        int i = bestTimeToByeandSellStock.bestTimeToByeStock(arr);
+        System.out.println(i);
+    }
+
+    public int bestTimeToByeStock(int[] prices){
+
+        if(prices == null || prices.length == 0){
+            return 0;
+        }
+
+        int minPrice = Integer.MAX_VALUE;
+        int maxProfit =0;
+
+        for (int price : prices) {
+            if (price < minPrice) {
+                minPrice = price;
+            } else if (price - minPrice > maxProfit) {
+                maxProfit = price - minPrice;
+            }
+        }
+        return maxProfit;
+    }
+}
+
+```

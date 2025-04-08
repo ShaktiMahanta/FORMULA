@@ -1,0 +1,21 @@
+### DropWizard
+
+1. **How to create a DropWizard project using Maven?**
+
+   **Step 1:** Using the terminal, enter the following command to create a project:
+
+   ```bash
+   mvn archetype:generate -DarchetypeGroupId=io.dropwizard.archetypes -DarchetypeArtifactId=java-simple -DarchetypeVersion=[REPLACE_WITH_VALID_DROPWIZARD_VERSION]
+   ```
+
+   `or`
+
+   ```bash
+   mvn archetype:generate  -B -DarchetypeGroupId=io.dropwizard.archetypes -DarchetypeArtifactId=java-simple -DarchetypeVersion=4.0.12 -DgroupId=com.triangle -DartifactId=dropwizard-example -Dversion=1.0-SNAPSHOT -Dpackage=com.triangle -Dname=dropwizard-example
+   ```
+
+   **Step 2:** Navigate to the project directory and open it in IntelliJ IDEA:
+
+   ```bash
+   idea .
+   ```
