@@ -4,4 +4,5 @@ export default {
   core_java: "Core Java",
   dsa: "DSA",
   interview: "Interview",
+  generativeai: "Generative AI",
 };

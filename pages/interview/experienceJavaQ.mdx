@@ -1,0 +1,2493 @@
+###### `@Transactional`
+
+`@Transactional` is used to manage database transactions in Spring Boot.
+
+- All operations succeed → `Commit`
+- Any operation fails → `Rollback`
+- Ensures data consistency and integrity.
+
+**Why use it?**
+
+Example: Money Transfer
+
+1. Deduct money from Account A
+2. Add money to Account B
+
+If the second operation fails, the first operation is also reverted.
+
+**Basic Syntax**
+
+```java
+@Transactional
+public void transferMoney() {
+    // DB operations
+}
+```
+
+**Default Rollback**
+
+- `RuntimeException`
+- `Error`
+
+```java
+@Transactional
+public void save() {
+    throw new RuntimeException();
+}
+```
+
+**Rollback for Checked Exception**
+
+```java
+@Transactional(rollbackFor = Exception.class)
+public void process() throws Exception {
+    throw new Exception();
+}
+```
+
+**Read Only Transaction**
+
+```java
+@Transactional(readOnly = true)
+public List<User> getUsers() {
+    return repository.findAll();
+}
+```
+
+**Propagation Types**
+
+| Type           | Description                                      |
+| -------------- | ------------------------------------------------ |
+| `REQUIRED`     | Default. Join existing transaction or create new |
+| `REQUIRES_NEW` | Always starts a new transaction                  |
+
+**Interview Points**
+
+- Use in the **Service Layer**.
+- Default propagation: `Propagation.REQUIRED`.
+- Checked exceptions do not trigger rollback by default.
+- Does not work on `private` methods (Spring AOP limitation).
+
+**Quick Remember**
+
+> All Success = Commit
+> Any Failure = Rollback
+
+###### `@ControllerAdvice`
+
+`@ControllerAdvice` is used for **global exception handling** across all controllers in a Spring Boot application.
+
+Instead of writing try-catch blocks in every controller, exceptions can be handled in one central place.
+
+**Why use it?**
+
+- Centralized exception handling.
+- Cleaner controller code.
+- Consistent error responses.
+- Reusable across multiple controllers.
+
+**Example**
+
+```java
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        throw new RuntimeException("User not found");
+    }
+}
+```
+
+```java
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleException(
+            RuntimeException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(ex.getMessage());
+    }
+}
+```
+
+**Common Annotations**
+
+| Annotation              | Purpose                                   |
+| ----------------------- | ----------------------------------------- |
+| `@ControllerAdvice`     | Global exception handling for controllers |
+| `@ExceptionHandler`     | Handles specific exceptions               |
+| `@RestControllerAdvice` | `@ControllerAdvice + @ResponseBody`       |
+
+**Using `@RestControllerAdvice`**
+
+```java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(
+            Exception ex) {
+
+        return ResponseEntity
+                .internalServerError()
+                .body(ex.getMessage());
+    }
+}
+```
+
+**Interview Points**
+
+- Used for global exception handling.
+- Reduces duplicate try-catch blocks.
+- Works across all controllers.
+- `@RestControllerAdvice` is preferred for REST APIs.
+- Commonly used with custom exceptions.
+
+**Quick Remember**
+
+> One application, one global exception handler.
+
+###### `Exception Hierarchy`
+
+Java exceptions follow a hierarchy starting from the `Throwable` class.
+
+```text
+Throwable
+├── Error
+│   ├── OutOfMemoryError
+│   └── StackOverflowError
+│
+└── Exception
+    ├── IOException
+    ├── SQLException
+    ├── ClassNotFoundException
+    │
+    └── RuntimeException
+        ├── NullPointerException
+        ├── ArithmeticException
+        ├── ArrayIndexOutOfBoundsException
+        └── IllegalArgumentException
+```
+
+**Types of Exceptions**
+
+| Type                  | Description                             |
+| --------------------- | --------------------------------------- |
+| `Checked Exception`   | Checked at compile time                 |
+| `Unchecked Exception` | Occurs at runtime                       |
+| `Error`               | Serious JVM issues, usually not handled |
+
+**Checked Exceptions**
+
+Must be handled using `try-catch` or `throws`.
+
+```java
+public void readFile() throws IOException {
+}
+```
+
+Examples:
+
+- `IOException`
+- `SQLException`
+- `ClassNotFoundException`
+
+**Unchecked Exceptions**
+
+Occur during runtime.
+
+```java
+String str = null;
+System.out.println(str.length());
+```
+
+Examples:
+
+- `NullPointerException`
+- `ArithmeticException`
+- `ArrayIndexOutOfBoundsException`
+
+**Errors**
+
+Caused by JVM or system failures.
+
+Examples:
+
+- `OutOfMemoryError`
+- `StackOverflowError`
+
+Usually not handled in application code.
+
+**Interview Points**
+
+- `Throwable` is the parent of all exceptions and errors.
+- `Exception` represents recoverable conditions.
+- `RuntimeException` represents unchecked exceptions.
+- Checked exceptions are verified at compile time.
+- Errors are generally not recoverable.
+
+**Quick Remember**
+
+> Throwable → Exception & Error → RuntimeException is a child of Exception.
+
+###### `Mapping in Hibernate`
+
+Mapping is the process of connecting Java objects (Entities) with database tables.
+
+Hibernate uses JPA annotations to define relationships between entities.
+
+**Types of Mapping**
+
+| Mapping       | Description                                           |
+| ------------- | ----------------------------------------------------- |
+| `@OneToOne`   | One record is associated with one record              |
+| `@OneToMany`  | One record is associated with multiple records        |
+| `@ManyToOne`  | Multiple records are associated with one record       |
+| `@ManyToMany` | Multiple records are associated with multiple records |
+
+**One-to-One**
+
+```java
+@Entity
+public class User {
+
+    @Id
+    private Long id;
+
+    @OneToOne
+    private Passport passport;
+}
+```
+
+Example:
+
+- One User → One Passport
+
+**One-to-Many**
+
+```java
+@Entity
+public class Department {
+
+    @OneToMany(mappedBy = "department")
+    private List<Employee> employees;
+}
+```
+
+Example:
+
+- One Department → Many Employees
+
+**Many-to-One**
+
+```java
+@Entity
+public class Employee {
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+}
+```
+
+Example:
+
+- Many Employees → One Department
+
+**Many-to-Many**
+
+```java
+@Entity
+public class Student {
+
+    @ManyToMany
+    private List<Course> courses;
+}
+```
+
+Example:
+
+- Many Students ↔ Many Courses
+
+**Important Annotations**
+
+| Annotation    | Purpose                               |
+| ------------- | ------------------------------------- |
+| `@Entity`     | Marks a class as a database entity    |
+| `@Table`      | Maps entity to a table                |
+| `@Id`         | Primary key                           |
+| `@JoinColumn` | Foreign key column                    |
+| `mappedBy`    | Defines the owning/non-owning side    |
+| `@JoinTable`  | Creates a join table for many-to-many |
+
+**Interview Points**
+
+- Hibernate mapping defines relationships between entities.
+- `@ManyToOne` is the most commonly used mapping.
+- `mappedBy` avoids creating duplicate relationships.
+- `@JoinColumn` is used to define foreign keys.
+- `@ManyToMany` creates an additional join table.
+
+**Quick Remember**
+
+> OneToOne, OneToMany, ManyToOne, ManyToMany are the four main Hibernate mappings.
+
+###### `Authentication and Authorization in Spring Boot`
+
+**Authentication** = Verifies who the user is.
+
+**Authorization** = Verifies what the user is allowed to access.
+
+Example:
+
+- Login with username/password → Authentication
+- Access Admin API only with ADMIN role → Authorization
+
+**Authentication Example**
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        UserDetails user = User
+                .withUsername("admin")
+                .password("{noop}admin123")
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(user);
+    }
+}
+```
+
+**Authorization Example**
+
+```java
+@Bean
+public SecurityFilterChain securityFilterChain(
+        HttpSecurity http) throws Exception {
+
+    return http
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/admin/**")
+                    .hasRole("ADMIN")
+                    .anyRequest()
+                    .authenticated())
+            .formLogin(Customizer.withDefaults())
+            .build();
+}
+```
+
+**Common Annotations**
+
+| Annotation           | Purpose                         |
+| -------------------- | ------------------------------- |
+| `@EnableWebSecurity` | Enables Spring Security         |
+| `@PreAuthorize`      | Method-level authorization      |
+| `@Secured`           | Restricts access based on roles |
+| `@RolesAllowed`      | Role-based access control       |
+
+**Method Level Authorization**
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
+public void deleteUser(Long id) {
+}
+```
+
+Only users with `ADMIN` role can access the method.
+
+**Authentication vs Authorization**
+
+| Feature       | Authentication  | Authorization        |
+| ------------- | --------------- | -------------------- |
+| Meaning       | Verify identity | Verify permissions   |
+| Question      | Who are you?    | What can you access? |
+| Happens First | Yes             | After Authentication |
+| Example       | Login           | Access Admin API     |
+
+**Interview Points**
+
+- Authentication identifies the user.
+- Authorization controls access to resources.
+- Spring Security handles both authentication and authorization.
+- Roles are commonly used for authorization.
+- Authentication always happens before authorization.
+
+**Quick Remember**
+
+> Authentication = Who are you?
+> Authorization = What are you allowed to do?
+
+###### `Flow from UI to Backend till Database`
+
+A typical Spring Boot application follows a layered architecture.
+
+```text
+UI
+ ↓
+Controller
+ ↓
+Service
+ ↓
+Repository (DAO)
+ ↓
+Database
+```
+
+**Flow Explanation**
+
+| Layer        | Responsibility                            |
+| ------------ | ----------------------------------------- |
+| `UI`         | Sends HTTP request                        |
+| `Controller` | Receives request and delegates to Service |
+| `Service`    | Contains business logic                   |
+| `Repository` | Interacts with database                   |
+| `Database`   | Stores and retrieves data                 |
+
+**Example Flow**
+
+**1. UI sends request**
+
+```http
+GET /users/1
+```
+
+**2. Controller**
+
+```java
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+        return userService.getUser(id);
+    }
+}
+```
+
+**3. Service**
+
+```java
+@Service
+public class UserService {
+
+    public User getUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow();
+    }
+}
+```
+
+**4. Repository**
+
+```java
+@Repository
+public interface UserRepository
+        extends JpaRepository<User, Long> {
+}
+```
+
+**5. Database**
+
+```sql
+SELECT * FROM users WHERE id = 1;
+```
+
+**Request Lifecycle**
+
+```text
+Browser/Postman
+      ↓
+DispatcherServlet
+      ↓
+Controller
+      ↓
+Service
+      ↓
+Repository
+      ↓
+Database
+
+Database
+      ↓
+Repository
+      ↓
+Service
+      ↓
+Controller
+      ↓
+JSON Response
+      ↓
+UI
+```
+
+**Interview Points**
+
+- Controller handles HTTP requests.
+- Service contains business logic.
+- Repository performs database operations.
+- JPA/Hibernate converts Java operations into SQL.
+- Response travels back in the reverse direction as JSON.
+
+**Quick Remember**
+
+> UI → Controller → Service → Repository → Database → Repository → Service → Controller → UI
+
+###### `Try-With-Resources`
+
+`try-with-resources` is used to automatically close resources such as files, streams, database connections, and scanners after use.
+
+It was introduced in **Java 7**.
+
+**Why use it?**
+
+- Automatically closes resources.
+- Prevents resource leaks.
+- Cleaner than using `finally` blocks.
+
+**Example**
+
+```java
+try (BufferedReader br =
+         new BufferedReader(
+             new FileReader("test.txt"))) {
+
+    System.out.println(br.readLine());
+}
+catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+After execution, `BufferedReader` is automatically closed.
+
+**Without Try-With-Resources**
+
+```java
+BufferedReader br = null;
+
+try {
+    br = new BufferedReader(
+            new FileReader("test.txt"));
+}
+finally {
+    if (br != null) {
+        br.close();
+    }
+}
+```
+
+More code and harder to maintain.
+
+**How does it work?**
+
+The resource must implement:
+
+```java
+AutoCloseable
+```
+
+Examples:
+
+- `BufferedReader`
+- `Scanner`
+- `FileInputStream`
+- `Connection`
+- `PreparedStatement`
+
+**Multiple Resources**
+
+```java
+try (
+    Connection con = dataSource.getConnection();
+    PreparedStatement ps =
+            con.prepareStatement("SELECT * FROM users")
+) {
+    // DB operations
+}
+```
+
+Resources are closed automatically in reverse order.
+
+**Interview Points**
+
+- Introduced in Java 7.
+- Automatically closes resources.
+- Resource must implement `AutoCloseable`.
+- Reduces boilerplate code.
+- Preferred over manual closing in `finally`.
+
+**Quick Remember**
+
+> Try-With-Resources = Automatic Resource Closing + No Resource Leaks
+
+###### `Day-to-Day Activities as a Java Developer`
+
+A Java Developer is involved in developing, testing, debugging, and maintaining applications.
+
+**Common Daily Activities**
+
+| Activity             | Description                                          |
+| -------------------- | ---------------------------------------------------- |
+| Requirement Analysis | Understand business requirements and user stories    |
+| Development          | Write Java/Spring Boot code and implement features   |
+| Code Review          | Review teammates' code and follow coding standards   |
+| Bug Fixing           | Analyze and resolve production or QA issues          |
+| Unit Testing         | Write JUnit and Mockito test cases                   |
+| API Development      | Create and maintain REST APIs                        |
+| Database Work        | Write SQL queries and optimize performance           |
+| Debugging            | Use logs and IDE debugger to identify issues         |
+| Git Operations       | Commit, push, merge, and resolve conflicts           |
+| Agile Meetings       | Attend standups, sprint planning, and retrospectives |
+| Documentation        | Update Confluence, API docs, and technical designs   |
+
+**Typical Development Flow**
+
+```text
+Requirement
+    ↓
+Design
+    ↓
+Coding
+    ↓
+Unit Testing
+    ↓
+Code Review
+    ↓
+QA Testing
+    ↓
+Deployment
+    ↓
+Production Support
+```
+
+**Tools Commonly Used**
+
+- Java
+- Spring Boot
+- Hibernate/JPA
+- Maven/Gradle
+- Git/GitLab/Bitbucket
+- JUnit & Mockito
+- Postman
+- Jira
+- Confluence
+- DBeaver/pgAdmin
+
+**Interview Points**
+
+- Develop new features based on user stories.
+- Fix bugs and production issues.
+- Write unit and integration tests.
+- Participate in code reviews.
+- Work closely with QA, DevOps, and Business teams.
+- Follow Agile/Scrum methodology.
+
+**Quick Remember**
+
+> Analyze → Develop → Test → Review → Deploy → Support
+
+###### `Build Process - Angular vs Java Spring Boot`
+
+The build process converts source code into deployable artifacts.
+
+**Angular Build Process**
+
+```text
+Angular Code (TypeScript, HTML, CSS)
+        ↓
+ng build
+        ↓
+Compilation & Bundling
+        ↓
+JavaScript, HTML, CSS Files
+        ↓
+dist/ Folder
+        ↓
+Deploy to Web Server (Nginx, Apache, CDN)
+```
+
+**Output**
+
+```text
+dist/
+ ├── index.html
+ ├── main.js
+ ├── styles.css
+ └── assets/
+```
+
+Angular produces static frontend files.
+
+**Spring Boot Build Process**
+
+```text
+Java Source Code
+        ↓
+mvn clean install
+        ↓
+Compile Java Code
+        ↓
+Run Tests
+        ↓
+Package Application
+        ↓
+JAR/WAR File
+        ↓
+Deploy to Server
+```
+
+**Output**
+
+```text
+target/
+ └── application.jar
+```
+
+Spring Boot produces an executable JAR/WAR.
+
+**Common Build Commands**
+
+```bash
+# Angular
+ng build
+
+# Spring Boot
+mvn clean install
+```
+
+**Angular vs Spring Boot Build**
+
+| Feature    | Angular       | Spring Boot            |
+| ---------- | ------------- | ---------------------- |
+| Language   | TypeScript    | Java                   |
+| Build Tool | Angular CLI   | Maven / Gradle         |
+| Output     | HTML, JS, CSS | JAR / WAR              |
+| Deployment | Web Server    | JVM Application Server |
+| Folder     | `dist/`       | `target/`              |
+
+**Interview Points**
+
+- Angular build generates static frontend assets.
+- Spring Boot build generates executable JAR/WAR files.
+- Angular uses `ng build`.
+- Spring Boot commonly uses `mvn clean install`.
+- Both perform compilation and optimization before deployment.
+
+**Quick Remember**
+
+> Angular → Source Code → dist/ (HTML, JS, CSS)
+> Spring Boot → Source Code → target/ (JAR/WAR)
+
+###### `Generate dist Folder in Angular`
+
+The `dist` folder contains the production-ready build files generated from the Angular application.
+
+**Build Command**
+
+```bash
+ng build
+```
+
+After successful execution, Angular creates the `dist` folder.
+
+**Production Build**
+
+```bash
+ng build --configuration production
+```
+
+or
+
+```bash
+ng build --prod
+```
+
+(Older Angular versions)
+
+**Build Flow**
+
+```text
+Angular Source Code
+(TypeScript, HTML, CSS)
+        ↓
+ng build
+        ↓
+Compilation
+        ↓
+Bundling & Optimization
+        ↓
+dist/ Folder
+```
+
+**Generated Output**
+
+```text
+dist/
+ ├── browser/
+ │   ├── index.html
+ │   ├── main.js
+ │   ├── styles.css
+ │   └── assets/
+```
+
+**Common Build Location**
+
+```text
+project-root/
+ ├── src/
+ ├── angular.json
+ └── dist/
+```
+
+**Useful Commands**
+
+```bash
+# Development Build
+ng build
+
+# Production Build
+ng build --configuration production
+
+# Watch Mode
+ng build --watch
+```
+
+**Interview Points**
+
+- `ng build` generates the `dist` folder.
+- `dist` contains deployable frontend files.
+- Angular compiles TypeScript into JavaScript.
+- Production builds are optimized and minified.
+- The `dist` folder is deployed to Nginx, Apache, or a CDN.
+
+**Quick Remember**
+
+> ng build → Compile + Bundle → dist Folder → Deploy
+
+###### `Run Angular Application on Different Port`
+
+By default, Angular runs on:
+
+```text
+http://localhost:4200
+```
+
+To run the application on a different port, use the `--port` option.
+
+**Run on Port 4300**
+
+```bash
+ng serve --port 4300
+```
+
+Application URL:
+
+```text
+http://localhost:4300
+```
+
+**Run on Any Custom Port**
+
+```bash
+ng serve --port 4500
+```
+
+```text
+http://localhost:4500
+```
+
+**Build & Run Flow**
+
+```text
+Angular Application
+        ↓
+ng serve --port 4300
+        ↓
+Angular Dev Server Starts
+        ↓
+http://localhost:4300
+```
+
+**Configure Default Port in angular.json**
+
+```json
+{
+  "projects": {
+    "my-app": {
+      "architect": {
+        "serve": {
+          "options": {
+            "port": 4300
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Now simply run:
+
+```bash
+ng serve
+```
+
+**Interview Points**
+
+- Default Angular port is `4200`.
+- Use `ng serve --port <port-number>` to change the port.
+- Multiple Angular applications can run simultaneously on different ports.
+- Port can also be configured in `angular.json`.
+
+**Quick Remember**
+
+> Default Port = 4200
+> Custom Port = ng serve --port 4300
+
+###### `Angular Consuming Secured REST Endpoints`
+
+To securely consume a REST API, Angular typically uses **JWT (JSON Web Token) Authentication**.
+
+**Flow**
+
+```text
+User Login
+    ↓
+Angular sends username/password
+    ↓
+Spring Boot validates user
+    ↓
+JWT Token generated
+    ↓
+Angular stores token
+    ↓
+Angular sends token in API requests
+    ↓
+Spring Security validates token
+    ↓
+Response returned
+```
+
+**Login Request**
+
+```typescript
+this.http.post("/api/auth/login", {
+  username: "admin",
+  password: "password",
+});
+```
+
+**Response**
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9..."
+}
+```
+
+**Store Token**
+
+```typescript
+localStorage.setItem("token", response.token);
+```
+
+**Send Token in Request**
+
+```typescript
+const headers = new HttpHeaders({
+  Authorization: `Bearer ${token}`,
+});
+
+this.http.get("/api/users", { headers });
+```
+
+**Using HTTP Interceptor (Recommended)**
+
+```typescript
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler) {
+    const token = localStorage.getItem("token");
+
+    const clonedReq = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return next.handle(clonedReq);
+  }
+}
+```
+
+Interceptor automatically adds the token to every request.
+
+**Security Best Practices**
+
+| Practice        | Reason                        |
+| --------------- | ----------------------------- |
+| Use HTTPS       | Encrypts request and response |
+| Use JWT Token   | Stateless authentication      |
+| Use Interceptor | Avoid duplicate code          |
+| Token Expiry    | Prevent misuse of old tokens  |
+| Refresh Token   | Generate new access token     |
+
+**Interview Points**
+
+- JWT is the most common approach.
+- Angular sends token in `Authorization` header.
+- Spring Security validates the token.
+- HTTP Interceptor is used to attach tokens automatically.
+- Always use HTTPS in production.
+
+**Quick Remember**
+
+> Login → Get JWT → Store Token → Send Bearer Token → Backend Validates → Access Granted
+
+###### `Microservices Security Implementation`
+
+Security in Microservices ensures that only authenticated and authorized users/services can access APIs.
+
+**Common Security Flow**
+
+```text
+Client
+   ↓
+API Gateway
+   ↓
+Authentication (JWT/OAuth2)
+   ↓
+Microservice A
+   ↓
+Microservice B
+   ↓
+Database
+```
+
+**Authentication**
+
+- User logs in.
+- Auth Server validates credentials.
+- JWT token is generated.
+- Client sends JWT in every request.
+
+```http
+Authorization: Bearer <jwt-token>
+```
+
+**Authorization**
+
+- Role-based access control (RBAC).
+- Validate user roles before accessing APIs.
+
+```java
+@PreAuthorize("hasRole('ADMIN')")
+public void deleteUser() {
+}
+```
+
+**API Gateway Security**
+
+- Single entry point for all requests.
+- Validates JWT before routing requests.
+- Prevents direct access to internal services.
+
+Examples:
+
+- Spring Cloud Gateway
+- Kong
+- NGINX
+- Apigee
+
+**Service-to-Service Security**
+
+Microservices communicate securely using:
+
+- JWT Token Propagation
+- OAuth2 Client Credentials
+- Mutual TLS (mTLS)
+
+```text
+Service A
+   ↓ JWT/mTLS
+Service B
+```
+
+**OAuth2 Flow**
+
+```text
+Client
+   ↓
+Authorization Server
+   ↓
+Access Token
+   ↓
+Resource Server (Microservice)
+```
+
+Common Providers:
+
+- Keycloak
+- Okta
+- Auth0
+- Azure AD
+
+**Security Best Practices**
+
+| Practice     | Purpose                         |
+| ------------ | ------------------------------- |
+| JWT          | Stateless authentication        |
+| OAuth2       | Secure authorization            |
+| API Gateway  | Centralized security            |
+| HTTPS        | Encrypt communication           |
+| mTLS         | Secure service-to-service calls |
+| RBAC         | Role-based access control       |
+| Token Expiry | Reduce token misuse             |
+
+**Interview Points**
+
+- JWT is commonly used for authentication.
+- API Gateway acts as the security entry point.
+- OAuth2 is widely used in enterprise systems.
+- Internal services can use mTLS for secure communication.
+- Authorization is usually role-based using Spring Security.
+
+**Quick Remember**
+
+> Client → API Gateway → JWT Validation → Microservice → Database
+
+###### `Reverse Proxy`
+
+A Reverse Proxy sits between the client and backend servers.
+
+The client sends requests to the Reverse Proxy, and the proxy forwards them to the appropriate backend service.
+
+**Flow**
+
+```text
+Client
+   ↓
+Reverse Proxy
+   ↓
+Backend Server
+```
+
+**Example**
+
+```text
+Client
+   ↓
+Nginx
+   ↓
+Spring Boot Application
+```
+
+The client never directly accesses the backend server.
+
+**Why Use Reverse Proxy?**
+
+- Hide backend servers.
+- Load balancing.
+- SSL/TLS termination.
+- Security filtering.
+- Routing requests to different services.
+- Caching responses.
+
+**Nginx Example**
+
+```nginx
+server {
+    listen 80;
+
+    location / {
+        proxy_pass http://localhost:8080;
+    }
+}
+```
+
+Request:
+
+```text
+http://myapp.com
+```
+
+Forwarded to:
+
+```text
+http://localhost:8080
+```
+
+**Reverse Proxy vs Forward Proxy**
+
+| Feature  | Reverse Proxy             | Forward Proxy             |
+| -------- | ------------------------- | ------------------------- |
+| Position | Between client and server | Between user and internet |
+| Hides    | Backend servers           | Clients                   |
+| Used By  | Server side               | Client side               |
+| Example  | Nginx, HAProxy            | Corporate Proxy           |
+
+**Common Reverse Proxy Tools**
+
+- Nginx
+- HAProxy
+- Apache HTTP Server
+- Spring Cloud Gateway
+- Kong
+
+**Microservices Usage**
+
+```text
+Client
+   ↓
+API Gateway / Nginx
+   ↓
+User Service
+Order Service
+Payment Service
+```
+
+The reverse proxy routes requests to the correct microservice.
+
+**Interview Points**
+
+- Reverse Proxy receives requests before backend servers.
+- Provides load balancing and security.
+- Hides internal server details.
+- Commonly used with Nginx and API Gateways.
+- Frequently used in Microservices architecture.
+
+**Quick Remember**
+
+> Client → Reverse Proxy → Backend Server → Response
+
+###### `Deployment Process and Pipeline Issues`
+
+A deployment pipeline automates the process of building, testing, and deploying an application.
+
+**Deployment Flow**
+
+```text
+Developer Commit
+      ↓
+GitLab / GitHub
+      ↓
+CI Pipeline Triggered
+      ↓
+Build (Maven/Gradle)
+      ↓
+Unit Tests
+      ↓
+Create JAR/Docker Image
+      ↓
+Deploy to Dev/UAT/Prod
+      ↓
+Smoke Testing
+```
+
+**Typical Spring Boot Deployment**
+
+```bash
+mvn clean install
+```
+
+Output:
+
+```text
+target/application.jar
+```
+
+Deploy:
+
+```bash
+java -jar application.jar
+```
+
+**Pipeline Issues I Have Solved**
+
+**1. Build Failure due to Java Version Mismatch**
+
+```text
+class file version 61.0
+this runtime only recognizes up to 55.0
+```
+
+Cause:
+
+- Application built with Java 17.
+- Server running Java 11.
+
+Solution:
+
+- Upgraded runtime to Java 17 or aligned build JDK with server JDK.
+
+---
+
+**2. Dependency Download Failure**
+
+```text
+PKIX path building failed
+```
+
+Cause:
+
+- SSL certificate issue while downloading Maven dependencies.
+
+Solution:
+
+- Imported certificate into Java truststore.
+- Updated Maven repository configuration.
+
+---
+
+**3. Test Case Failure in Pipeline**
+
+Cause:
+
+- Environment-specific test data.
+- Hardcoded values.
+
+Solution:
+
+- Mocked dependencies using Mockito.
+- Removed environment dependency from tests.
+
+---
+
+**4. Application Startup Failure After Deployment**
+
+```text
+Failed to configure a DataSource
+```
+
+Cause:
+
+- Missing database URL or credentials.
+
+Solution:
+
+- Verified environment variables and application properties.
+
+---
+
+**5. Docker/Kubernetes Deployment Failure**
+
+Cause:
+
+- Incorrect image tag or configuration.
+
+Solution:
+
+- Verified image version and deployment YAML.
+- Redeployed with correct configuration.
+
+**Interview Points**
+
+- CI/CD automates build, test, and deployment.
+- Common tools: GitLab CI, Jenkins, GitHub Actions.
+- Always check build logs first.
+- Most deployment issues are related to configuration, dependencies, or environment mismatches.
+- Root cause analysis and log investigation are critical.
+
+**Quick Remember**
+
+> Commit → Build → Test → Package → Deploy → Verify
+
+###### `Synchronized`
+
+`synchronized` is used to make a method or block thread-safe by allowing only one thread to access a critical section at a time.
+
+It helps prevent **race conditions** when multiple threads access shared data.
+
+**Why use it?**
+
+Without synchronization:
+
+```text
+Thread A → count++
+Thread B → count++
+```
+
+Both threads may update the same value incorrectly.
+
+With synchronization:
+
+```text
+Thread A completes
+      ↓
+Thread B starts
+```
+
+Data remains consistent.
+
+**Synchronized Method**
+
+```java
+public synchronized void increment() {
+    count++;
+}
+```
+
+Only one thread can execute the method at a time.
+
+**Synchronized Block**
+
+```java
+public void increment() {
+    synchronized (this) {
+        count++;
+    }
+}
+```
+
+Locks only the critical section instead of the entire method.
+
+**Example**
+
+```java
+class Counter {
+
+    private int count = 0;
+
+    public synchronized void increment() {
+        count++;
+    }
+}
+```
+
+**Types of Synchronization**
+
+| Type                     | Description                        |
+| ------------------------ | ---------------------------------- |
+| `Method Level`           | Entire method is locked            |
+| `Block Level`            | Only specific code block is locked |
+| `Static Synchronization` | Locks class object                 |
+
+**Static Synchronization**
+
+```java
+public static synchronized void print() {
+}
+```
+
+Lock is acquired on the class object.
+
+**Advantages**
+
+- Prevents race conditions.
+- Ensures data consistency.
+- Makes shared resources thread-safe.
+
+**Disadvantages**
+
+- Performance overhead.
+- Threads may wait for lock release.
+- Can lead to deadlocks if not used properly.
+
+**Interview Points**
+
+- `synchronized` provides mutual exclusion.
+- Only one thread can access the locked resource at a time.
+- Uses intrinsic/object lock (monitor lock).
+- Method-level synchronization locks the entire method.
+- Block-level synchronization is generally preferred for better performance.
+
+**Quick Remember**
+
+> synchronized = One Thread at a Time + Thread Safety
+
+###### `Access Properties File Through Bean Class`
+
+Spring Boot allows reading values from `application.properties` or `application.yml` into a Bean.
+
+**application.properties**
+
+```properties
+app.name=User Service
+app.version=1.0
+```
+
+**Using `@Value`**
+
+```java
+@Component
+public class AppConfig {
+
+    @Value("${app.name}")
+    private String appName;
+
+    @Value("${app.version}")
+    private String version;
+}
+```
+
+Used for reading individual properties.
+
+**Using `@ConfigurationProperties` (Recommended)**
+
+```properties
+app.name=User Service
+app.version=1.0
+app.owner=Shakti
+```
+
+```java
+@Component
+@ConfigurationProperties(prefix = "app")
+public class AppProperties {
+
+    private String name;
+    private String version;
+    private String owner;
+
+    // getters and setters
+}
+```
+
+Access values:
+
+```java
+@Autowired
+private AppProperties appProperties;
+```
+
+```java
+System.out.println(appProperties.getName());
+```
+
+**`@Value` vs `@ConfigurationProperties`**
+
+| Feature         | `@Value`       | `@ConfigurationProperties`  |
+| --------------- | -------------- | --------------------------- |
+| Best For        | Few properties | Multiple related properties |
+| Type Safety     | Limited        | Better                      |
+| Maintainability | Lower          | Higher                      |
+| Performance     | Good           | Better for large configs    |
+
+**Interview Points**
+
+- Properties are usually stored in `application.properties` or `application.yml`.
+- `@Value` is used for single property values.
+- `@ConfigurationProperties` is preferred for grouped configurations.
+- Bean must be managed by Spring (`@Component`, `@Configuration`, etc.).
+- Commonly used for DB, API, and application configurations.
+
+**Quick Remember**
+
+> Few Properties → `@Value`
+> Multiple Related Properties → `@ConfigurationProperties`
+
+###### `WHERE vs HAVING`
+
+Both `WHERE` and `HAVING` are used to filter data in SQL, but they work at different stages.
+
+**Difference**
+
+| Feature             | WHERE       | HAVING           |
+| ------------------- | ----------- | ---------------- |
+| Filters             | Rows        | Groups           |
+| Used Before         | `GROUP BY`  | After `GROUP BY` |
+| Aggregate Functions | Not Allowed | Allowed          |
+| Performance         | Faster      | Slower           |
+
+**WHERE Example**
+
+Filter rows before grouping.
+
+```sql
+SELECT *
+FROM employees
+WHERE salary > 50000;
+```
+
+Result:
+
+- Only employees with salary greater than 50000 are selected.
+
+**HAVING Example**
+
+Filter groups after aggregation.
+
+```sql
+SELECT department_id,
+       COUNT(*) AS total_employees
+FROM employees
+GROUP BY department_id
+HAVING COUNT(*) > 5;
+```
+
+Result:
+
+- Only departments having more than 5 employees are returned.
+
+**Using WHERE and HAVING Together**
+
+```sql
+SELECT department_id,
+       COUNT(*) AS total_employees
+FROM employees
+WHERE salary > 50000
+GROUP BY department_id
+HAVING COUNT(*) > 5;
+```
+
+Execution Order:
+
+```text id="tt8jlwm"
+FROM
+ ↓
+WHERE
+ ↓
+GROUP BY
+ ↓
+HAVING
+ ↓
+SELECT
+ ↓
+ORDER BY
+```
+
+**Interview Points**
+
+- `WHERE` filters individual rows.
+- `HAVING` filters grouped/aggregated data.
+- `HAVING` is generally used with `GROUP BY`.
+- Aggregate functions like `COUNT()`, `SUM()`, `AVG()` are used in `HAVING`.
+- Use `WHERE` whenever possible for better performance.
+
+**Quick Remember**
+
+> WHERE filters Rows
+> HAVING filters Groups
+
+###### `WHERE and HAVING - Company Example`
+
+Assume we have an `employee` table:
+
+| emp_id | name  | department | salary |
+| ------ | ----- | ---------- | ------ |
+| 1      | John  | IT         | 80000  |
+| 2      | David | IT         | 90000  |
+| 3      | Sam   | HR         | 40000  |
+| 4      | Alex  | HR         | 60000  |
+| 5      | Bob   | IT         | 70000  |
+
+**Using WHERE**
+
+Find employees whose salary is greater than 70000.
+
+```sql
+SELECT *
+FROM employee
+WHERE salary > 70000;
+```
+
+Result:
+
+```text
+John  - IT - 80000
+David - IT - 90000
+```
+
+`WHERE` filters individual rows before grouping.
+
+---
+
+**Using HAVING**
+
+Find departments having more than 2 employees.
+
+```sql
+SELECT department,
+       COUNT(*) AS total_employees
+FROM employee
+GROUP BY department
+HAVING COUNT(*) > 2;
+```
+
+Result:
+
+```text
+IT - 3
+```
+
+`HAVING` filters groups after aggregation.
+
+---
+
+**Using WHERE and HAVING Together**
+
+Find departments having more than 1 employee whose salary is greater than 50000.
+
+```sql
+SELECT department,
+       COUNT(*) AS total_employees
+FROM employee
+WHERE salary > 50000
+GROUP BY department
+HAVING COUNT(*) > 1;
+```
+
+Explanation:
+
+- `WHERE salary > 50000` filters employees first.
+- `GROUP BY department` groups remaining employees.
+- `HAVING COUNT(*) > 1` filters departments.
+
+Result:
+
+```text
+IT - 3
+HR - 1 (removed by HAVING)
+```
+
+**Interview Points**
+
+- `WHERE` filters rows before grouping.
+- `HAVING` filters groups after grouping.
+- Aggregate functions are used in `HAVING`.
+- In real projects, both are commonly used together for reporting queries.
+
+**Quick Remember**
+
+> WHERE → Row Filter
+> GROUP BY → Create Groups
+> HAVING → Group Filter
+
+###### `OAuth2 Flow`
+
+OAuth2 is an authorization framework that allows users to grant limited access to resources without sharing credentials.
+
+Example:
+
+- Login with Google
+- Login with GitHub
+- Login with Facebook
+
+**Main Components**
+
+| Component            | Description                        |
+| -------------------- | ---------------------------------- |
+| Resource Owner       | User                               |
+| Client               | Angular/Web/Mobile Application     |
+| Authorization Server | Google, Keycloak, Okta, Auth0      |
+| Resource Server      | Spring Boot API                    |
+| Access Token         | Used to access protected resources |
+
+**OAuth2 Authorization Code Flow**
+
+```text
+User
+  ↓
+Client Application (Angular)
+  ↓
+Authorization Server (Google/Keycloak)
+  ↓
+Login & Consent
+  ↓
+Authorization Code
+  ↓
+Client Exchanges Code
+  ↓
+Access Token
+  ↓
+Call Spring Boot API
+  ↓
+Resource Server Validates Token
+  ↓
+Response
+```
+
+**Detailed Flow**
+
+```text
+1. User clicks Login
+      ↓
+2. Redirect to Authorization Server
+      ↓
+3. User enters credentials
+      ↓
+4. Authorization Code returned
+      ↓
+5. Client exchanges code for Access Token
+      ↓
+6. Access Token sent with API requests
+      ↓
+7. Resource Server validates token
+      ↓
+8. API response returned
+```
+
+**Access Token Usage**
+
+```http
+GET /api/users
+Authorization: Bearer eyJhbGciOi...
+```
+
+**Why Authorization Code Flow?**
+
+- Most secure OAuth2 flow.
+- Credentials are never shared with the client application.
+- Commonly used in Angular + Spring Boot applications.
+
+**OAuth2 vs JWT**
+
+| Feature          | OAuth2                  | JWT                     |
+| ---------------- | ----------------------- | ----------------------- |
+| Purpose          | Authorization Framework | Token Format            |
+| Token Support    | Can use JWT tokens      | JWT itself is the token |
+| Login Providers  | Google, Keycloak, Okta  | Not a provider          |
+| Enterprise Usage | Very Common             | Used inside OAuth2      |
+
+**Interview Points**
+
+- OAuth2 is for authorization.
+- Authorization Code Flow is the most commonly used flow.
+- Access Token is used to access protected APIs.
+- Spring Boot APIs act as Resource Servers.
+- Keycloak, Okta, Auth0, and Google are common Authorization Servers.
+
+**Quick Remember**
+
+> User Login → Authorization Code → Access Token → API Access
+
+###### `Difference Between save() and persist()`
+
+Both `save()` and `persist()` are used to store entities in the database, but they belong to different APIs and have some behavioral differences.
+
+**Source**
+
+| Method      | Belongs To        |
+| ----------- | ----------------- |
+| `save()`    | Hibernate Session |
+| `persist()` | JPA EntityManager |
+
+**Example**
+
+```java
+User user = new User();
+user.setName("Shakti");
+```
+
+Using `save()`:
+
+```java
+session.save(user);
+```
+
+Using `persist()`:
+
+```java
+entityManager.persist(user);
+```
+
+**Differences**
+
+| Feature                    | save()               | persist()    |
+| -------------------------- | -------------------- | ------------ |
+| API                        | Hibernate            | JPA          |
+| Return Type                | Returns generated ID | Returns void |
+| Standard                   | Hibernate Specific   | JPA Standard |
+| Portability                | Less                 | More         |
+| Recommended in Spring Boot | No                   | Yes          |
+
+**save() Example**
+
+```java
+Long id = (Long) session.save(user);
+```
+
+Returns the generated primary key.
+
+**persist() Example**
+
+```java
+entityManager.persist(user);
+```
+
+Entity becomes managed by the persistence context.
+
+**Spring Data JPA**
+
+Most projects use:
+
+```java
+userRepository.save(user);
+```
+
+Internally Spring Data JPA decides whether to:
+
+- Insert a new record
+- Update an existing record
+
+**Interview Points**
+
+- `save()` is a Hibernate-specific method.
+- `persist()` is a JPA-standard method.
+- `save()` returns the generated ID.
+- `persist()` returns void.
+- In Spring Boot, JPA (`persist`) approach is preferred.
+- `JpaRepository.save()` is the most commonly used method in real projects.
+
+**Quick Remember**
+
+> save() → Hibernate Specific + Returns ID
+> persist() → JPA Standard + Returns void
+
+###### `Cache Implementation`
+
+Caching is used to store frequently accessed data in memory to reduce database calls and improve application performance.
+
+**Why use Cache?**
+
+Without Cache:
+
+```text
+Request
+   ↓
+Application
+   ↓
+Database
+```
+
+Every request hits the database.
+
+With Cache:
+
+```text
+Request
+   ↓
+Application
+   ↓
+Cache
+   ↓ (Miss)
+Database
+```
+
+Frequently used data is served from cache.
+
+**Spring Boot Cache Example**
+
+Enable caching:
+
+```java
+@SpringBootApplication
+@EnableCaching
+public class Application {
+}
+```
+
+Cache a method:
+
+```java
+@Cacheable("users")
+public User getUser(Long id) {
+    return userRepository.findById(id)
+            .orElseThrow();
+}
+```
+
+First Call:
+
+```text
+Cache Miss → Database Hit
+```
+
+Next Calls:
+
+```text
+Cache Hit → Return from Cache
+```
+
+**Cache Annotations**
+
+| Annotation       | Purpose                          |
+| ---------------- | -------------------------------- |
+| `@Cacheable`     | Read from cache, store if absent |
+| `@CachePut`      | Update cache                     |
+| `@CacheEvict`    | Remove cache entry               |
+| `@EnableCaching` | Enable caching                   |
+
+**Cache Eviction**
+
+```java
+@CacheEvict(value = "users", key = "#id")
+public void deleteUser(Long id) {
+}
+```
+
+Removes stale data from cache.
+
+**Popular Cache Providers**
+
+- Redis
+- EhCache
+- Caffeine
+- Hazelcast
+
+**Real-Time Example**
+
+```text
+Product Details
+User Profile
+Configuration Data
+Master Data
+```
+
+These are commonly cached because they change infrequently.
+
+**Interview Points**
+
+- Cache improves performance by reducing database calls.
+- First request is usually a Cache Miss.
+- Subsequent requests are Cache Hits.
+- Redis is the most commonly used distributed cache.
+- Cache invalidation is important to avoid stale data.
+
+**Quick Remember**
+
+> Cache Hit → Fast Response
+> Cache Miss → Database Call → Store in Cache
+
+###### `Cache Types - Local vs Global Cache`
+
+Caching can be implemented as **Local Cache** or **Global (Distributed) Cache**.
+
+**Local Cache**
+
+- Cache is stored inside the application memory (JVM).
+- Each application instance maintains its own cache.
+- Very fast access.
+- Cache is lost when the application restarts.
+
+```text
+App Instance 1
+      ↓
+ Local Cache
+
+App Instance 2
+      ↓
+ Local Cache
+```
+
+Examples:
+
+- Caffeine
+- EhCache (Local Mode)
+
+**Global (Distributed) Cache**
+
+- Cache is stored in a separate cache server.
+- Multiple application instances share the same cache.
+- Suitable for Microservices and distributed systems.
+
+```text
+App 1 ──┐
+        │
+App 2 ──┼── Redis Cache
+        │
+App 3 ──┘
+```
+
+Examples:
+
+- Redis
+- Hazelcast
+- Memcached
+
+**Comparison**
+
+| Feature        | Local Cache              | Global Cache               |
+| -------------- | ------------------------ | -------------------------- |
+| Storage        | Application Memory (JVM) | External Cache Server      |
+| Sharing        | Not Shared               | Shared Across Applications |
+| Performance    | Faster                   | Slight Network Overhead    |
+| Scalability    | Limited                  | Highly Scalable            |
+| Restart Impact | Cache Lost               | Cache Remains Available    |
+| Microservices  | Not Preferred            | Preferred                  |
+
+**Real-Time Usage**
+
+| Scenario                       | Cache Type           |
+| ------------------------------ | -------------------- |
+| Single Spring Boot Application | Local Cache          |
+| Multiple Microservices         | Global Cache (Redis) |
+| Frequently Read Data           | Both                 |
+| Distributed Systems            | Global Cache         |
+
+**Interview Points**
+
+- Local cache resides in JVM memory.
+- Global cache is shared across multiple services.
+- Redis is the most popular distributed cache.
+- Local cache is faster but not shared.
+- Global cache ensures consistency across instances.
+
+**Quick Remember**
+
+> Local Cache = Inside Application (JVM)
+> Global Cache = Shared Cache Server (Redis)
+
+###### `DDL Scripts - Project Level or Separate?`
+
+DDL (Data Definition Language) scripts are used to create and modify database objects.
+
+Examples:
+
+```sql
+CREATE TABLE users (...);
+
+ALTER TABLE users ADD COLUMN email VARCHAR(100);
+```
+
+**Two Common Approaches**
+
+| Approach             | Description                            |
+| -------------------- | -------------------------------------- |
+| Project Level        | Application manages schema changes     |
+| Separate DBA Process | Database scripts managed independently |
+
+**Project Level (Recommended)**
+
+Using tools like:
+
+- Flyway
+- Liquibase
+
+```text id="s4k5w0"
+Application Start
+      ↓
+Flyway/Liquibase
+      ↓
+Execute Pending Scripts
+      ↓
+Application Ready
+```
+
+Example:
+
+```sql
+V1__create_user_table.sql
+V2__add_email_column.sql
+```
+
+Benefits:
+
+- Version controlled.
+- Automated deployments.
+- Consistent across environments.
+
+**Separate DBA Handling**
+
+```text id="g1a2z9"
+Developer Creates Script
+      ↓
+DBA Review
+      ↓
+Manual Execution
+      ↓
+Deployment
+```
+
+Benefits:
+
+- More control in large enterprises.
+- Useful for highly regulated environments.
+
+Drawbacks:
+
+- Manual effort.
+- Risk of environment mismatch.
+
+**Current Industry Practice**
+
+| Project Type                | Preferred Approach              |
+| --------------------------- | ------------------------------- |
+| Spring Boot / Microservices | Flyway or Liquibase             |
+| Agile Projects              | Project-Level Scripts           |
+| Enterprise with DBA Team    | Separate DBA Review + Execution |
+| CI/CD Pipeline              | Flyway/Liquibase                |
+
+**Interview Points**
+
+- DDL scripts should be version controlled.
+- Flyway and Liquibase are industry standards.
+- Scripts are usually executed during deployment.
+- Large organizations may involve DBAs for approvals.
+- Avoid Hibernate auto DDL in production.
+
+**Quick Remember**
+
+> Development/CI-CD → Flyway or Liquibase
+> Enterprise Production → DBA Review + Versioned Scripts
+
+###### `Dialect and hibernate.ddl-auto`
+
+**Dialect**
+
+Hibernate Dialect tells Hibernate which database is being used and how to generate database-specific SQL queries.
+
+Examples:
+
+```properties
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+```
+
+```properties
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+```
+
+Why needed?
+
+- SQL syntax differs across databases.
+- Hibernate generates optimized SQL based on the selected dialect.
+
+Examples:
+
+- PostgreSQLDialect
+- MySQLDialect
+- OracleDialect
+- SQLServerDialect
+
+**hibernate.ddl-auto**
+
+Controls how Hibernate handles database schema creation and updates.
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+```
+
+**Values**
+
+| Value         | Description                         |
+| ------------- | ----------------------------------- |
+| `none`        | No schema changes                   |
+| `validate`    | Validate schema against entities    |
+| `update`      | Update schema without deleting data |
+| `create`      | Drop and recreate schema on startup |
+| `create-drop` | Create on startup, drop on shutdown |
+
+**Examples**
+
+```properties
+spring.jpa.hibernate.ddl-auto=validate
+```
+
+Checks if tables and columns match entity definitions.
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+```
+
+Adds missing tables/columns automatically.
+
+```properties
+spring.jpa.hibernate.ddl-auto=create
+```
+
+Recreates all tables every startup.
+
+**Recommended Usage**
+
+| Environment               | ddl-auto             |
+| ------------------------- | -------------------- |
+| Local Development         | `update`             |
+| QA/UAT                    | `validate`           |
+| Production                | `validate` or `none` |
+| Flyway/Liquibase Projects | `validate`           |
+
+**Interview Points**
+
+- Dialect helps Hibernate generate database-specific SQL.
+- `ddl-auto` controls schema generation behavior.
+- `update` is useful during development.
+- Avoid `create` and `create-drop` in production.
+- In production, schema changes are usually managed by Flyway or Liquibase.
+
+**Quick Remember**
+
+> Dialect = Which Database?
+> ddl-auto = How Hibernate Manages Schema?
+
+###### `Database Connection Pool and HikariCP`
+
+A Connection Pool maintains a pool of reusable database connections instead of creating a new connection for every request.
+
+**Why use Connection Pool?**
+
+Without Pool:
+
+```text
+Request
+   ↓
+Create DB Connection
+   ↓
+Execute Query
+   ↓
+Close Connection
+```
+
+Creating connections repeatedly is expensive.
+
+With Pool:
+
+```text
+Request
+   ↓
+Get Connection from Pool
+   ↓
+Execute Query
+   ↓
+Return Connection to Pool
+```
+
+Improves performance and scalability.
+
+**What is HikariCP?**
+
+- Default connection pool in Spring Boot.
+- High-performance JDBC connection pool.
+- Fast, lightweight, and production-ready.
+
+**Spring Boot Configuration**
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/testdb
+spring.datasource.username=postgres
+spring.datasource.password=admin
+
+spring.datasource.hikari.maximum-pool-size=20
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=30000
+```
+
+**Important Properties**
+
+| Property             | Description                            |
+| -------------------- | -------------------------------------- |
+| `maximum-pool-size`  | Maximum connections in pool            |
+| `minimum-idle`       | Minimum idle connections               |
+| `connection-timeout` | Wait time before timeout               |
+| `idle-timeout`       | Time before idle connection is removed |
+| `max-lifetime`       | Maximum lifetime of a connection       |
+
+**Connection Flow**
+
+```text
+Application
+      ↓
+HikariCP Pool
+      ↓
+Database
+```
+
+**Benefits**
+
+- Faster database access.
+- Reuses connections.
+- Reduces database overhead.
+- Handles concurrent requests efficiently.
+
+**Interview Points**
+
+- HikariCP is the default connection pool in Spring Boot.
+- Connections are reused instead of recreated.
+- Pool size should be configured based on application load.
+- Too many connections can overload the database.
+- Connection pooling improves performance and scalability.
+
+**Quick Remember**
+
+> Without Pool → Create Connection Every Time
+> With HikariCP → Reuse Existing Connections
+
+###### `HashMap vs ConcurrentHashMap`
+
+Both are used to store data as **key-value pairs**, but they differ in thread safety.
+
+**HashMap**
+
+- Not thread-safe.
+- Multiple threads can cause data inconsistency.
+- Faster in single-threaded applications.
+- Allows one `null` key and multiple `null` values.
+
+```java
+Map<Integer, String> map = new HashMap<>();
+map.put(1, "Java");
+```
+
+**ConcurrentHashMap**
+
+- Thread-safe.
+- Supports concurrent read and write operations.
+- Uses internal locking mechanisms for better performance.
+- Does not allow `null` key or `null` value.
+
+```java
+Map<Integer, String> map =
+        new ConcurrentHashMap<>();
+map.put(1, "Java");
+```
+
+**Comparison**
+
+| Feature         | HashMap                | ConcurrentHashMap             |
+| --------------- | ---------------------- | ----------------------------- |
+| Thread Safe     | No                     | Yes                           |
+| Performance     | Faster (Single Thread) | Better for Multi-Threading    |
+| Null Key        | 1 Allowed              | Not Allowed                   |
+| Null Value      | Multiple Allowed       | Not Allowed                   |
+| Synchronization | None                   | Internal Concurrent Mechanism |
+| Use Case        | Single Thread          | Multi-Threaded Applications   |
+
+**Internal Working**
+
+```text id="lzm1pk"
+HashMap
+  ↓
+Array
+  ↓
+Bucket
+  ↓
+LinkedList / Tree
+```
+
+```text id="w7tjlwm"
+ConcurrentHashMap
+  ↓
+Multiple Threads
+  ↓
+Concurrent Access
+  ↓
+Thread-Safe Operations
+```
+
+**When to Use?**
+
+- `HashMap` → Single-threaded applications.
+- `ConcurrentHashMap` → Multi-threaded applications, caches, shared data structures.
+
+**Interview Points**
+
+- HashMap is not thread-safe.
+- ConcurrentHashMap is thread-safe.
+- ConcurrentHashMap performs better than synchronized HashMap in concurrent environments.
+- ConcurrentHashMap does not allow null keys or values.
+- Both provide O(1) average lookup time.
+
+**Quick Remember**
+
+> HashMap = Fast but Not Thread Safe
+> ConcurrentHashMap = Thread Safe for Concurrent Access
